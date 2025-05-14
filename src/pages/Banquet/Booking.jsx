@@ -123,7 +123,7 @@ const Booking = () => {
 
 
         <div className="flex justify-center items-center mt-6">
-<button className="bg-gradient-to-r from-sky-600 to-cyan-400 py-2 w-[20%] text-white ">Submit</button>
+<button className="bg-gradient-to-r from-sky-600 to-cyan-400 py-2 w-[40%] md:w-[20%] text-white ">Submit</button>
         </div>
 
    

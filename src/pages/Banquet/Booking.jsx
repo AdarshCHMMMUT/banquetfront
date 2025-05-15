@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Calendar } from 'primereact/calendar';
+import { MultiSelect } from 'primereact/multiselect';
 // index.js or App.js
 import 'primereact/resources/themes/lara-light-indigo/theme.css';  // or any other PrimeReact theme
 import 'primereact/resources/primereact.min.css';  
@@ -18,22 +19,23 @@ const Booking = () => {
    
   //  };
 
+   const [selectedMenu, setSelectedMenu] = useState(null);
+
+  const menuItems = [
+  { name: "Paneer Curry", price: 300 },
+  { name: "Chapati Veg", price: 500 },
+  { name: "Salad", price: 300},
+  { name: "Salad", price: 500 },
+  { name: "Paneer Curry", price: 300 },
+  { name: "Chapati Veg", price: 500 },
+  { name: "Paneer Curry", price: 300 },
+  { name: "Chapati Veg", price: 500 },
+  ];
+
    const [selected, setSelected] = useState('Rate Plan');
+   const [vegNonvegPlan, setVegNonveg] = useState('veg/Non veg');
       
-     const handleSelect = (item) => {
-        setSelected(item);
-       
-        document.getElementById('rate-dropdown').removeAttribute('open');
-      };
     
-    
-        const [vegNonvegPlan, setVegNonveg] = useState('veg/Non veg');
-      
-     const handleFood = (item) => {
-        setVegNonveg(item);
-       
-        document.getElementById('food-dropdown').removeAttribute('open');
-      };
       const [advance, setAdvance] = useState('');
       const [total, setTotal] = useState('');
       const balance = ((total) || 0) - ((advance) || 0);
@@ -117,12 +119,14 @@ const Booking = () => {
   
 </select>
 
-          
-
+<div className="card ">
+            <MultiSelect value={selectedMenu} onChange={(e) => setSelectedMenu(e.value)} options={menuItems} optionLabel="name" display="chip" 
+                placeholder="Select Dishes" maxSelectedLabels={3} className="w-full md:w-20rem " />
         </div>
+</div>
 
 
-        <div className="flex justify-center items-center mt-6">
+<div className="flex justify-center items-center mt-6">
 <button className="bg-gradient-to-r from-sky-600 to-cyan-400 py-2 w-[40%] md:w-[20%] text-white ">Submit</button>
         </div>
 

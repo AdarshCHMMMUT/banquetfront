@@ -31,6 +31,11 @@ const Booking = () => {
   { id: 6,name: "Chapati Veg", price: 500 },
   { id: 7,name: "Paneer Curry", price: 300 },
   { id: 8,name: "Chapati Veg", price: 500 },
+  { id: 9,name: "Salad", price: 500 },
+  { id: 10,name: "Paneer Curry", price: 300 },
+  { id: 11,name: "Chapati Veg", price: 500 },
+  { id: 12,name: "Paneer Curry", price: 300 },
+  { id: 13,name: "Chapati Veg", price: 500 },
   ];
 
    const [selected, setSelected] = useState('Rate Plan');
@@ -147,10 +152,13 @@ const Booking = () => {
   <div className="modal-box h-[90%] w-[80%]">
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">Menu Items</h2>
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {menuItems.map((item) => (<div key={item.id} onClick={() => toggleSelect(item.id)} className={`border border-gray-300 rounded-md p-4 flex flex-col items-center cursor-pointer  ${selectedMenu.some((selected) => selected.id === item.id)  ? "bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white border- shadow-md"
+        {menuItems.map((item) => (<div key={item.id} onClick={() => toggleSelect(item.id)} className={`border border-gray-300 rounded-md p-4 flex flex-col items-center cursor-pointer text-center  ${selectedMenu.some((selected) => selected.id === item.id)  ? "bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white border- shadow-md"
         : "hover:bg-gray-100"}`}>
-           {item.name} -{item.price}
+          <span>{item.name}</span>
+          <span>Price - {item.price}</span>
+            
         </div> ))}
 
         {/* {selectedMenu.map(item => ( <div key={item.id}>

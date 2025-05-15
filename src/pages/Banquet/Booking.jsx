@@ -41,6 +41,7 @@ const Booking = () => {
    const [selected, setSelected] = useState('Rate Plan');
    const [vegNonvegPlan, setVegNonveg] = useState('veg/Non veg');
    const [selectedMenu, setSelectedMenu] = useState([]);
+   const [searchTerm, setSearchTerm] = useState("");
    
       
     
@@ -50,6 +51,10 @@ const Booking = () => {
 
       const toggleSelect = (id) =>{
         const selectedItem = menuItems.find(item => item.id === id);
+
+        const filteredMenuItems = menuItems.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
 
         setSelectedMenu((prevSelected) => {
@@ -146,14 +151,34 @@ const Booking = () => {
   
 </select>
 
-<label htmlFor="my_modal_7" className="btn">open modal</label>
+<label htmlFor="my_modal_7" className="btn ">open modal</label>
 <input type="checkbox" id="my_modal_7" className="modal-toggle" />
 <div className="modal" role="dialog">
   <div className="modal-box h-[90%] w-[80%]">
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">Menu Items</h2>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+<label className="input w-[100%] border border-gradient-to-r from-[#5e0d14] to-[#991e1e]  ">
+  <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <g
+      strokeLinejoin="round"
+      strokeLinecap="round"
+      strokeWidth="2.5"
+      fill="none"
+      stroke="currentColor"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.3-4.3"></path>
+    </g>
+  </svg>
+  <input type="search" className="grow " value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search" />
+ 
+</label>
+
+
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-[42px]">
         {menuItems.map((item) => (<div key={item.id} onClick={() => toggleSelect(item.id)} className={`border border-gray-300 rounded-md p-4 flex flex-col items-center cursor-pointer text-center  ${selectedMenu.some((selected) => selected.id === item.id)  ? "bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white border- shadow-md"
         : "hover:bg-gray-100"}`}>
           <span>{item.name}</span>

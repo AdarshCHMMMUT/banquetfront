@@ -126,7 +126,7 @@ const App = () => {
                     aria-label="dashboard"
                     className={
                       activeLink == "dashboard"
-                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-sky-600 to-cyan-400 px-1 py-2 text-white "
+                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-[#5e0d14] to-[#991e1e] px-1 py-2 text-white "
                         : "relative flex items-center space-x-4 rounded-xl px-1 py-2  text-gray-600"
                     }
                   >
@@ -163,7 +163,7 @@ const App = () => {
                     aria-label="booking"
                     className={
                       activeLink == "booking"
-                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-sky-600 to-cyan-400 px-1 py-2 text-white "
+                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-[#5e0d14] to-[#991e1e] px-1 py-2 text-white "
                         : "relative flex items-center space-x-4 rounded-xl px-1 py-2  text-gray-600"
                     }
                   >

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Calendar } from 'primereact/calendar';
 import { MultiSelect } from 'primereact/multiselect';
-// index.js or App.js
-import 'primereact/resources/themes/lara-light-indigo/theme.css';  // or any other PrimeReact theme
+
+import 'primereact/resources/themes/lara-light-indigo/theme.css';  
 import 'primereact/resources/primereact.min.css';  
 import { useNavigate } from "react-router-dom";    
-         // core styles
+
+
 
 
 const Booking = () => {
@@ -19,26 +20,47 @@ const Booking = () => {
    
   //  };
 
-   const [selectedMenu, setSelectedMenu] = useState(null);
+
 
   const menuItems = [
-  { name: "Paneer Curry", price: 300 },
-  { name: "Chapati Veg", price: 500 },
-  { name: "Salad", price: 300},
-  { name: "Salad", price: 500 },
-  { name: "Paneer Curry", price: 300 },
-  { name: "Chapati Veg", price: 500 },
-  { name: "Paneer Curry", price: 300 },
-  { name: "Chapati Veg", price: 500 },
+  { id: 1,name: "Paneer Curry", price: 300 },
+  { id: 2,name: "Chapati Veg", price: 500 },
+  { id: 3,name: "Salad", price: 300},
+  { id: 4,name: "Salad", price: 500 },
+  { id: 5,name: "Paneer Curry", price: 300 },
+  { id: 6,name: "Chapati Veg", price: 500 },
+  { id: 7,name: "Paneer Curry", price: 300 },
+  { id: 8,name: "Chapati Veg", price: 500 },
   ];
 
    const [selected, setSelected] = useState('Rate Plan');
    const [vegNonvegPlan, setVegNonveg] = useState('veg/Non veg');
+   const [selectedMenu, setSelectedMenu] = useState([]);
+   
       
     
       const [advance, setAdvance] = useState('');
       const [total, setTotal] = useState('');
       const balance = ((total) || 0) - ((advance) || 0);
+
+      const toggleSelect = (id) =>{
+        const selectedItem = menuItems.find(item => item.id === id);
+
+
+        setSelectedMenu((prevSelected) => {
+          const isalredySelected = prevSelected.some(item => item.id === id);
+          if (isalredySelected){
+             return prevSelected.filter(item => item.id !== id);
+          }
+          else{
+            return [...prevSelected, selectedItem];
+          }
+        });
+
+      };
+
+
+
 
  return (
 
@@ -119,15 +141,40 @@ const Booking = () => {
   
 </select>
 
-<div className="card ">
-            <MultiSelect value={selectedMenu} onChange={(e) => setSelectedMenu(e.value)} options={menuItems} optionLabel="name" display="chip" 
-                placeholder="Select Dishes" maxSelectedLabels={3} className="w-full md:w-20rem " />
+<label htmlFor="my_modal_7" className="btn">open modal</label>
+<input type="checkbox" id="my_modal_7" className="modal-toggle" />
+<div className="modal" role="dialog">
+  <div className="modal-box h-[90%] w-[80%]">
+    <div className="p-4 max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-center">Menu Items</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {menuItems.map((item) => (<div key={item.id} onClick={() => toggleSelect(item.id)} className={`border border-gray-300 rounded-md p-4 flex flex-col items-center cursor-pointer  ${selectedMenu.some((selected) => selected.id === item.id)  ? "bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white border- shadow-md"
+        : "hover:bg-gray-100"}`}>
+           {item.name} -{item.price}
+        </div> ))}
+
+        {/* {selectedMenu.map(item => ( <div key={item.id}>
+           {item.name} -{item.price}
+
         </div>
+        ))} */}
+        
+      </div>
+    </div>
+  </div>
+  <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
 </div>
 
 
+
+
+</div>
+
+
+
+
 <div className="flex justify-center items-center mt-6">
-<button className="bg-gradient-to-r from-sky-600 to-cyan-400 py-2 w-[40%] md:w-[20%] text-white ">Submit</button>
+<button className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] py-2 w-[40%] md:w-[20%] text-white ">Submit</button>
         </div>
 
    

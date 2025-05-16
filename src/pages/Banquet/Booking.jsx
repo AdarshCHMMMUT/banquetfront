@@ -167,7 +167,7 @@ const Booking = () => {
 <label htmlFor="my_modal_7" className="btn ">open modal</label>
 <input type="checkbox" id="my_modal_7" className="modal-toggle" />
 <div className="modal" role="dialog ">
-  <div className="modal-box relative h-[90%] w-full max-w-3xl">
+  <div className="modal-box relative h-[90%] w-full max-w-3xl z-50">
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">Menu Items</h2>
 

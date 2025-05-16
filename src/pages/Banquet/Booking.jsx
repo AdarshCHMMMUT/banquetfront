@@ -204,7 +204,7 @@ const Booking = () => {
         {filteredMenuItems.map((item) => (<div key={item.id} onClick={() => toggleSelect(item.id)} className={`border border-gray-300 rounded-md p-4 flex flex-col  cursor-pointer   ${selectedMenu.some((selected) => selected.id === item.id)  ? "border-2 border-[#991e1e]  shadow-md"
         : " shadow-xl hover:bg-gray-100  hover:drop-shadow-[0_4px_6px_rgba(153,30,30,0.4)] "}`}>
           <div className="flex justify-center items-center mb-2">
-          {/* <img className=" w-full h-[10rem]  aspect-3/2 object-cover rounded-md" src={item.url} alt="" /> */}
+          <img className=" w-full h-[10rem]  aspect-3/2 object-cover rounded-md" src={item.url} alt="" />
           </div>
          
           <p className="">{item.name}</p>

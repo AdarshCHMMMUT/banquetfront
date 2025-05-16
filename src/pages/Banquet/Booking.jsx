@@ -4,7 +4,8 @@ import { MultiSelect } from 'primereact/multiselect';
 
 import 'primereact/resources/themes/lara-light-indigo/theme.css';  
 import 'primereact/resources/primereact.min.css';  
-import { useNavigate } from "react-router-dom";    
+import { useNavigate } from "react-router-dom";   
+
 
 
 
@@ -201,23 +202,28 @@ const Booking = () => {
 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 pt-[42px]   ">
-        {filteredMenuItems.map((item) => (<div key={item.id} onClick={() => toggleSelect(item.id)} className={`border border-gray-300 rounded-md p-4 flex flex-col  cursor-pointer   ${selectedMenu.some((selected) => selected.id === item.id)  ? "border-2 border-[#991e1e]  shadow-md"
-        : " shadow-xl hover:bg-gray-100  hover:drop-shadow-[0_4px_6px_rgba(153,30,30,0.4)] "}`}>
-          <div className="flex justify-center items-center mb-2">
-          <img className=" w-full h-[10rem]  aspect-3/2 object-cover rounded-md" src={item.url} alt="" />
-          </div>
-         
-          <p className="">{item.name}</p>
-          
-            
-        </div> ))}
+       {filteredMenuItems.map((item) => (
+  <div
+    key={item.id}
+    onClick={() => toggleSelect(item.id)}
+    className={`rounded-md p-4 flex flex-col cursor-pointer
+      ${
+        selectedMenu.some((selected) => selected.id === item.id)
+          ? "border-2 border-[#991e1e] shadow-md"
+          : "border border-gray-300 shadow-xl hover:bg-gray-100 hover:drop-shadow-[0_4px_6px_rgba(153,30,30,0.4)]"
+      }`}
+  >
+    <div className="flex justify-center items-center mb-2">
+      <img
+        className="w-full h-[10rem] aspect-3/2 object-cover rounded-md"
+        src={item.url}
+        alt=""
+      />
+    </div>
+    <p>{item.name}</p>
+  </div>
+))}
 
-        {/* {selectedMenu.map(item => ( <div key={item.id}>
-           {item.name} -{item.price}
-
-        </div>
-        ))} */}
-        
       </div>
     </div>
   </div>
@@ -236,6 +242,7 @@ const Booking = () => {
 <button className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] py-2 w-[40%] md:w-[20%] text-white ">Submit</button>
         </div>
 
+       
    
 
         

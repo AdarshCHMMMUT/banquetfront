@@ -152,3 +152,10 @@
 .label {
   font-weight: 500;
 }
+
+.peak-lagan-day {
+  background-color: #991e1e !important;
+  color: white !important;
+  border-radius: 50% !important;
+  font-weight: bold;
+}

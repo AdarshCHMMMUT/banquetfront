@@ -9,7 +9,8 @@ function LaganCalendar() {
   const isRangeSelected = dates && dates.length === 2 && dates[0] && dates[1];
 
   const handleBooking = () => {
-    // Handle booking logic here
+    console.log("Booking:", dates);
+    // Add your booking logic here
   };
 
   // Get auspicious dates for a specific year
@@ -31,16 +32,46 @@ function LaganCalendar() {
     ];
   };
 
-  // Check if a calendar day is auspicious
-  const isAuspiciousDate = ({ day, month, year }) => {
-    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const auspiciousDates = getAuspiciousDates(year);
-    return auspiciousDates.includes(dateString);
+  // Heavy lagan dates (highlighted differently)
+  const getHeavyLaganDates = (year) => {
+    const fixedHeavyDates = [
+      [5, 1], [5, 7], [5, 15], [5, 24],
+      [10, 22], [10, 23], [10, 30]
+    ];
+    return fixedHeavyDates.map(([m, d]) =>
+      `${year}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    );
   };
 
-  // Highlight auspicious dates in the calendar
+  // Helper to format date object
+  const formatDate = ({ year, month, day }) =>
+    `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+  // Calendar date rendering
   const dateTemplate = (date) => {
-    if (isAuspiciousDate(date)) {
+    const year = date.year;
+    const currentDate = formatDate(date);
+    const auspiciousDates = getAuspiciousDates(year);
+    const heavyDates = getHeavyLaganDates(year);
+
+    if (heavyDates.includes(currentDate)) {
+      return (
+        <div style={{
+          backgroundColor: '#991e1e',
+          color: 'white',
+          fontWeight: 'bold',
+          borderRadius: '50%',
+          width: '2em',
+          height: '2em',
+          lineHeight: '2em',
+          textAlign: 'center'
+        }}>
+          {date.day}
+        </div>
+      );
+    }
+
+    if (auspiciousDates.includes(currentDate)) {
       return (
         <div style={{
           backgroundColor: '#4CAF50',
@@ -56,6 +87,7 @@ function LaganCalendar() {
         </div>
       );
     }
+
     return <div>{date.day}</div>;
   };
 

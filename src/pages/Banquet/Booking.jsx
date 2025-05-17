@@ -10,16 +10,9 @@ import { useNavigate } from "react-router-dom";
 
 
 
+
+
 const Booking = () => {
-  // const [dates, setDates] = useState(null);
-  // const navigate = useNavigate();
-  // const [showForm, setShowForm] = useState(false);
-
-  //  const isRangeSelected = dates && dates.length === 2 && dates[0] && dates[1];
-
-  //  const handleBooking = () => {
-   
-  //  };
 
 
 
@@ -84,31 +77,7 @@ const Booking = () => {
  return (
 
     <>
-    {/* <div className="flex flex-col items-center">
-         
-
-            <Calendar 
-                value={dates}
-                onChange={(e) => setDates(e.value)} 
-                selectionMode="range" 
-                inline 
-                showWeek 
-                readOnlyInput 
-                className="w-full "
-            />
-
-            <button
-  className={`py-2 w-[20%] text-white ${
-    isRangeSelected ? "bg-gradient-to-r from-sky-600 to-cyan-400" : "bg-gray-400"
-  }`}
-  disabled={!isRangeSelected} onClick={handleBooking}
->
-  Book Now
-</button>
-
-
-        </div> */}
-
+   
   
 
 
@@ -165,29 +134,21 @@ const Booking = () => {
   <option>Non Veg</option>
 </select>
 
-<label htmlFor="my_modal_7" className="btn ">open modal</label>
-<input type="checkbox" id="my_modal_7" className="modal-toggle" />
-<div className="modal" role="dialog ">
-  <div className="modal-box ">
-    <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 "></h2>
 
-      
-    </div>
-  </div>
-  <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
-</div>
 
 {/* You can open the modal using document.getElementById('ID').showModal() method */}
 <button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}>open modal</button>
 <dialog id="my_modal_3" className="modal">
-  <div className="modal-box relative h-[90%] w-full max-w-3xl z-50">
+  <div className="modal-box relative h-[90%] w-full max-w-3xl z-50 pt-0">
+
+   
+    
+   <div className="sticky top-0 left-0 w-full px-4 py-2 bg-white z-10">
     <form method="dialog">
       {/* if there is a button in form, it will close the modal */}
       <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
     </form>
-    <h3 className="font-bold text-lg text-center">Menu Items</h3>
-   <div className="sticky top-0 left-0 w-full px-4 py-2 bg-white z-10">
+    <h3 className="font-bold text-lg text-center pb-2">Menu Items</h3>
 <label className=" input w-full border border-gray-300 rounded-md text-center py-2 focus-within:outline-none focus-within:ring-2 focus-within:ring-[#991e1e]">
   <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <g
@@ -216,7 +177,7 @@ const Booking = () => {
 
 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 pt-[42px]   ">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  gap-4 pt-[42px]   ">
        {filteredMenuItems.map((item) => (
   <div
     key={item.id}
@@ -235,7 +196,7 @@ const Booking = () => {
         alt=""
       />
     </div>
-    <p>{item.name}</p>
+    <p className="font-semibold">{item.name}</p>
   </div>
 ))}
 

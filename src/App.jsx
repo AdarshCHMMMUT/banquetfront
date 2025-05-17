@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 
 import Booking from "./pages/Banquet/Booking";
+import LaganCalendar from "./pages/Banquet/LaganCalender";
 import logo from "./assets/pcs.png";
 const App = () => {
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ const App = () => {
                 <li
                   onClick={() => {
                     setActiveLink("dashboard");
-                    navigate("/");
+                    navigate("/laganCalendar");
                     setMl();
                   }}
                 >
@@ -246,6 +247,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Home />} />
                  <Route path="/booking" element={<Booking />} />
+                 <Route path="/laganCalendar" element={<LaganCalendar />} />
               </Routes>
             </div>
           </div>

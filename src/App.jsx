@@ -118,7 +118,7 @@ const App = () => {
                 <li
                   onClick={() => {
                     setActiveLink("dashboard");
-                    navigate("/laganCalendar");
+                    navigate("/");
                     setMl();
                   }}
                 >
@@ -247,7 +247,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Home />} />
                  <Route path="/booking" element={<Booking />} />
-                 <Route path="/laganCalendar" element={<LaganCalendar />} />
+               
               </Routes>
             </div>
           </div>

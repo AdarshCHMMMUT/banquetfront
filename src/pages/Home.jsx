@@ -1,8 +1,9 @@
 import React from "react";
+import LaganCalendar from "./Banquet/LaganCalender";
 
 const Home = () => {
   return (<>
-
+<LaganCalendar/>
   </>);
 };
 

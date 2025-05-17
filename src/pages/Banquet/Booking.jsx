@@ -158,7 +158,7 @@ const Booking = () => {
 
   <select
   defaultValue="Pick a color"
-  className="select bg-white text-center text-gray-700 focus:text-black focus:placeholder-black border border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+  className="select bg-white text-center w-full text-gray-700 focus:text-black focus:placeholder-black border border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
 >
   <option disabled>Veg /Non Veg</option>
   <option>Veg</option>
@@ -168,11 +168,26 @@ const Booking = () => {
 <label htmlFor="my_modal_7" className="btn ">open modal</label>
 <input type="checkbox" id="my_modal_7" className="modal-toggle" />
 <div className="modal" role="dialog ">
-  <div className="modal-box relative h-[90%] w-full max-w-3xl z-50">
+  <div className="modal-box ">
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">Menu Items</h2>
+      <h2 className="text-2xl font-bold mb-4 "></h2>
 
-      <div className="sticky top-0 left-0 w-full px-4 py-2 bg-white z-10">
+      
+    </div>
+  </div>
+  <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
+</div>
+
+{/* You can open the modal using document.getElementById('ID').showModal() method */}
+<button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}>open modal</button>
+<dialog id="my_modal_3" className="modal">
+  <div className="modal-box relative h-[90%] w-full max-w-3xl z-50">
+    <form method="dialog">
+      {/* if there is a button in form, it will close the modal */}
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <h3 className="font-bold text-lg text-center">Menu Items</h3>
+   <div className="sticky top-0 left-0 w-full px-4 py-2 bg-white z-10">
 <label className=" input w-full border border-gray-300 rounded-md text-center py-2 focus-within:outline-none focus-within:ring-2 focus-within:ring-[#991e1e]">
   <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <g
@@ -225,11 +240,8 @@ const Booking = () => {
 ))}
 
       </div>
-    </div>
   </div>
-  <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
-</div>
-
+</dialog>
 
 
 

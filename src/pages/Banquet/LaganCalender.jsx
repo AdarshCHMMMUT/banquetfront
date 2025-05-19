@@ -163,11 +163,17 @@ const renderCalendar = () => {
       }
     }
 
-    weeks.push(<tr key={week}>{days}</tr>);
+    // ❌ Skip pushing this row if all 7 cells are empty
+    const isRowEmpty = days.every(cell => !cell.props.children || cell.props.children.props === undefined);
+
+    if (!isRowEmpty) {
+      weeks.push(<tr key={week}>{days}</tr>);
+    }
   }
 
   return weeks;
 };
+
 
 
 
@@ -214,18 +220,18 @@ const renderCalendar = () => {
           <thead>
             <tr>
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                <th key={day} className="h-8 md:h-12 bg-gray-100 text-xs md:text-sm">
+                <th key={day} className=" h-8 md:h-12 bg-gray-100 text-xs md:text-sm">
                   {day.substring(0, 1)}
                   <span className="hidden sm:inline">{day.substring(1)}</span>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>{renderCalendar()}</tbody>
+          <tbody >{renderCalendar()}</tbody>
         </table>
       </div>
 
-      <div className="mt-2 md:mt-4 flex flex-wrap justify-center gap-2 md:gap-4 text-xs md:text-sm">
+      <div className="mt-2  flex flex-wrap justify-center gap-2 md:gap-4 text-xs md:text-sm">
         <div className="flex items-center space-x-1">
           <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#10b981' }}></span>
           <span>Very Good</span>

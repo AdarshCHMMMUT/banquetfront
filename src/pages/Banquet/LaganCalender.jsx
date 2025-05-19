@@ -1,19 +1,40 @@
-import React, { useState } from 'react';
-import { Calendar } from 'primereact/calendar';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 function LaganCalendar() {
   const [dates, setDates] = useState(null);
+  const [hoveredDate, setHoveredDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const calendarRef = useRef(null);
+  const [selectedRange, setSelectedRange] = useState({ start: null, end: null });
+  const [month, setMonth] = useState(4); // May = 4 (0-indexed)
+  const [year, setYear] = useState(2025);
+
   const navigate = useNavigate();
 
-  const isRangeSelected = dates && dates.length === 2 && dates[0] && dates[1];
-
-  const handleBooking = () => {
-    console.log("Booking:", dates);
-    // Add your booking logic here
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+      setHoveredDate(null); // Clear hover state
+    }
   };
 
-  // Get auspicious dates for a specific year
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
+
+const handleBooking = () => {
+  if (selectedRange.start && selectedRange.end) {
+    navigate(`/book?start=${selectedRange.start}&end=${selectedRange.end}`);
+  } else if (selectedDate) {
+    navigate(`/book/${selectedDate}`);
+  }
+};
+
+  const format = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
   const getAuspiciousDates = (year) => {
     const format = (m, d) => `${year}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     return [
@@ -32,85 +53,187 @@ function LaganCalendar() {
     ];
   };
 
-  // Heavy lagan dates (highlighted differently)
-  const getHeavyLaganDates = (year) => {
-    const fixedHeavyDates = [
-      [5, 1], [5, 7], [5, 15], [5, 24],
-      [10, 22], [10, 23], [10, 30]
-    ];
-    return fixedHeavyDates.map(([m, d]) =>
-      `${year}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
-    );
+  const auspiciousDates = new Set(getAuspiciousDates(year));
+
+  const getDateCategory = (date) => {
+    const heavyDates = new Set(Array.from(auspiciousDates).filter(d => [1, 5, 10, 15, 20, 25, 30].includes(parseInt(d.split('-')[2]))));
+    const mediumDates = new Set(Array.from(auspiciousDates).filter(d => [2, 4, 7, 9, 17, 22, 27].includes(parseInt(d.split('-')[2]))));
+    if (heavyDates.has(date)) return 'heavy';
+    if (mediumDates.has(date)) return 'medium';
+    if (auspiciousDates.has(date)) return 'light';
+    return null;
   };
 
-  // Helper to format date object
-  const formatDate = ({ year, month, day }) =>
-    `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-  // Calendar date rendering
-  const dateTemplate = (date) => {
-    const year = date.year;
-    const currentDate = formatDate(date);
-    const auspiciousDates = getAuspiciousDates(year);
-    const heavyDates = getHeavyLaganDates(year);
-
-    if (heavyDates.includes(currentDate)) {
-      return (
-        <div style={{
-          backgroundColor: '#991e1e',
-          color: 'white',
-          fontWeight: 'bold',
-          borderRadius: '50%',
-          width: '2em',
-          height: '2em',
-          lineHeight: '2em',
-          textAlign: 'center'
-        }}>
-          {date.day}
-        </div>
-      );
-    }
-
-    if (auspiciousDates.includes(currentDate)) {
-      return (
-        <div style={{
-          backgroundColor: '#4CAF50',
-          color: 'white',
-          fontWeight: 'bold',
-          borderRadius: '50%',
-          width: '2em',
-          height: '2em',
-          lineHeight: '2em',
-          textAlign: 'center'
-        }}>
-          {date.day}
-        </div>
-      );
-    }
-
-    return <div>{date.day}</div>;
+  const getTooltipText = (category) => {
+    if (category === 'heavy') return 'Very Good (Heavy Booking)';
+    if (category === 'medium') return 'Good Day';
+    if (category === 'light') return 'Auspicious Day';
+    return '';
   };
+
+  const dateTemplate = ({ year, month, day }) => {
+  const currentDate = format(year, month, day);
+  const category = getDateCategory(currentDate);
+
+  let bgColor = '';
+  if (category === 'heavy') bgColor = '#10b981'; // Green
+  else if (category === 'medium') bgColor = '#fde68a'; // Yellow
+  else if (category === 'light') bgColor = '#f97316'; // Orange
+
+  const isStart = selectedRange.start === currentDate;
+  const isEnd = selectedRange.end === currentDate;
+  const isInRange = selectedRange.start && selectedRange.end && (
+    new Date(currentDate) > new Date(selectedRange.start) &&
+    new Date(currentDate) < new Date(selectedRange.end)
+  );
+  const isSingleSelected = selectedDate === currentDate && !selectedRange.start && !selectedRange.end;
+
+  const highlightClass = isStart || isEnd || isSingleSelected
+    ? 'border-4 border-blue-500'
+    : isInRange
+    ? 'ring-2 ring-blue-300'
+    : '';
 
   return (
-    <div className="flex flex-col items-center">
-      <Calendar
-        value={dates}
-        onChange={(e) => setDates(e.value)}
-        selectionMode="range"
-        inline
-        showWeek
-        readOnlyInput
-        className="w-full"
-        dateTemplate={dateTemplate}
-        viewDate={dates?.[0] || new Date()}
-      />
+    <div
+      className={`w-16 h-16 rounded-md flex items-center justify-center cursor-pointer relative ${highlightClass}`}
+      style={{ backgroundColor: bgColor }}
+      onClick={() => {
+        if (!selectedRange.start && !selectedRange.end) {
+          setSelectedDate(currentDate); // single date
+          setSelectedRange({ start: currentDate, end: null });
+        } else if (selectedRange.start && !selectedRange.end) {
+          const start = new Date(selectedRange.start);
+          const end = new Date(currentDate);
+          if (end > start) {
+            setSelectedRange({ ...selectedRange, end: currentDate });
+          } else {
+            // Reset selection if clicked before start
+            setSelectedRange({ start: currentDate, end: null });
+            setSelectedDate(currentDate);
+          }
+        } else {
+          // Start new selection
+          setSelectedDate(currentDate);
+          setSelectedRange({ start: currentDate, end: null });
+        }
+      }}
+      onMouseEnter={() => setHoveredDate(currentDate)}
+      onMouseLeave={() => setHoveredDate(null)}
+      title={getTooltipText(category)}
+    >
+      {day}
+    </div>
+  );
+};
+
+
+    const getDateClass = (day) => {
+    if ([5, 15, 10].includes(day)) return 'bg-green-500 text-white';      // Very Good
+    if ([7, 17].includes(day)) return 'bg-yellow-300 text-black';        // Good
+    if ([6, 8, 18, 19, 24, 28].includes(day)) return 'bg-orange-500 text-white'; // Heavy Booking
+    return '';
+  };
+
+const renderCalendar = () => {
+  const weeks = [];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+
+  let day = 1;
+
+  for (let week = 0; week < 6; week++) {
+    const days = [];
+
+    for (let i = 0; i < 7; i++) {
+      const cellIndex = week * 7 + i;
+
+      if (cellIndex < firstDay || day > daysInMonth) {
+        days.push(
+          <td key={i} className="h-20 align-top text-center">
+            {/* Empty */}
+          </td>
+        );
+      } else {
+        const cellContent = dateTemplate({ year, month, day });
+        days.push(
+          <td key={i} className="h-20 align-top text-center">
+            {cellContent}
+          </td>
+        );
+        day++;
+      }
+    }
+
+    weeks.push(<tr key={week}>{days}</tr>);
+  }
+
+  return weeks;
+};
+
+
+
+  const handlePrev = () => {
+    if (month === 0) {
+      setMonth(11);
+      setYear(year - 1);
+    } else {
+      setMonth(month - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (month === 11) {
+      setMonth(0);
+      setYear(year + 1);
+    } else {
+      setMonth(month + 1);
+    }
+  };
+
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  return (
+    <div  ref={calendarRef} className="p-6 text-center">
+      <div className="flex justify-between items-center mb-4">
+        <button onClick={handlePrev} className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white px-4 py-2 rounded">Previous</button>
+        <h2 className="text-xl font-semibold">{`${monthNames[month]} ${year}`}</h2>
+        <button onClick={handleNext} className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white px-4 py-2 rounded">Next</button>
+      </div>
+ <table className="table-fixed w-full border-collapse">
+  <thead>
+    <tr>
+      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+      <th key={day} className="w-[14.2857%] h-16 bg-gray-100">
+  <div className="flex items-center justify-center h-full">{day}</div>
+</th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>{renderCalendar()}</tbody>
+</table>
+
+
+      {/* Legend */}
+      <div className="mt-4 flex justify-center space-x-4 text-sm">
+        <div className="flex items-center space-x-1">
+          <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: '#10b981' }}></span>
+          <span>Very Good</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: '#fde68a' }}></span>
+          <span>Good</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: '#f97316' }}></span>
+          <span>Heavy Booking</span>
+        </div>
+      </div>
 
       <button
-        className={`py-2 w-[20%] text-white mt-4 ${
-          isRangeSelected ? "bg-gradient-to-r from-sky-600 to-cyan-400" : "bg-gray-400"
-        }`}
-        disabled={!isRangeSelected}
-        onClick={handleBooking}
+        className={`py-2 px-12 mt-6 text-white rounded ${selectedRange.start ? 'bg-gradient-to-r from-[#5e0d14] to-[#991e1e]' : 'bg-gray-400'}`}
+      disabled={!selectedDate && (!selectedRange.start || !selectedRange.end)}
+onClick={handleBooking}
       >
         Book Now
       </button>

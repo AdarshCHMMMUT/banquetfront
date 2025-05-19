@@ -96,7 +96,7 @@ const handleBooking = () => {
 
   return (
   <div
-      className={`w-10 h-10 md:w-12 md:h-12 relative ${highlightClass}`}
+      className={`w-9 h-10 md:w-12 md:h-12 relative ${highlightClass}`}
       style={{ backgroundColor: bgColor }}
       onClick={() => {
         if (!selectedRange.start && !selectedRange.end) {

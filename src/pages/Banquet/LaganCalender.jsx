@@ -95,35 +95,33 @@ const handleBooking = () => {
     : '';
 
   return (
-    <div
-      className={`w-16 h-16 rounded-md flex items-center justify-center cursor-pointer relative ${highlightClass}`}
-      style={{ backgroundColor: bgColor }}
-      onClick={() => {
-        if (!selectedRange.start && !selectedRange.end) {
-          setSelectedDate(currentDate); // single date
-          setSelectedRange({ start: currentDate, end: null });
-        } else if (selectedRange.start && !selectedRange.end) {
-          const start = new Date(selectedRange.start);
-          const end = new Date(currentDate);
-          if (end > start) {
-            setSelectedRange({ ...selectedRange, end: currentDate });
-          } else {
-            // Reset selection if clicked before start
-            setSelectedRange({ start: currentDate, end: null });
+ <div
+        className={`w-8 h-8 md:w-12 md:h-12 lg:w-16 lg:h-16 rounded-md flex items-center justify-center cursor-pointer relative ${highlightClass}`}
+        style={{ backgroundColor: bgColor }}
+        onClick={() => {
+          if (!selectedRange.start && !selectedRange.end) {
             setSelectedDate(currentDate);
+            setSelectedRange({ start: currentDate, end: null });
+          } else if (selectedRange.start && !selectedRange.end) {
+            const start = new Date(selectedRange.start);
+            const end = new Date(currentDate);
+            if (end > start) {
+              setSelectedRange({ ...selectedRange, end: currentDate });
+            } else {
+              setSelectedRange({ start: currentDate, end: null });
+              setSelectedDate(currentDate);
+            }
+          } else {
+            setSelectedDate(currentDate);
+            setSelectedRange({ start: currentDate, end: null });
           }
-        } else {
-          // Start new selection
-          setSelectedDate(currentDate);
-          setSelectedRange({ start: currentDate, end: null });
-        }
-      }}
-      onMouseEnter={() => setHoveredDate(currentDate)}
-      onMouseLeave={() => setHoveredDate(null)}
-      title={getTooltipText(category)}
-    >
-      {day}
-    </div>
+        }}
+        onMouseEnter={() => setHoveredDate(currentDate)}
+        onMouseLeave={() => setHoveredDate(null)}
+        title={getTooltipText(category)}
+      >
+        <span className="text-xs md:text-sm lg:text-base">{day}</span>
+      </div>
   );
 };
 
@@ -194,46 +192,60 @@ const renderCalendar = () => {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   return (
-    <div  ref={calendarRef} className="p-6 text-center">
-      <div className="flex justify-between items-center mb-4">
-        <button onClick={handlePrev} className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white px-4 py-2 rounded">Previous</button>
-        <h2 className="text-xl font-semibold">{`${monthNames[month]} ${year}`}</h2>
-        <button onClick={handleNext} className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white px-4 py-2 rounded">Next</button>
+    <div ref={calendarRef} className="p-2 md:p-6 text-center max-w-full overflow-x-auto">
+      <div className="flex justify-between items-center mb-2 md:mb-4">
+        <button 
+          onClick={handlePrev} 
+          className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white px-2 py-1 md:px-4 md:py-2 rounded text-sm md:text-base"
+        >
+          Previous
+        </button>
+        <h2 className="text-sm md:text-xl font-semibold mx-2">{`${monthNames[month]} ${year}`}</h2>
+        <button 
+          onClick={handleNext} 
+          className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white px-2 py-1 md:px-4 md:py-2 rounded text-sm md:text-base"
+        >
+          Next
+        </button>
       </div>
- <table className="table-fixed w-full border-collapse">
-  <thead>
-    <tr>
-      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-      <th key={day} className="w-[14.2857%] h-16 bg-gray-100">
-  <div className="flex items-center justify-center h-full">{day}</div>
-</th>
-      ))}
-    </tr>
-  </thead>
-  <tbody>{renderCalendar()}</tbody>
-</table>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full max-w-full border-collapse">
+          <thead>
+            <tr>
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <th key={day} className="h-8 md:h-12 bg-gray-100 text-xs md:text-sm">
+                  {day.substring(0, 1)}
+                  <span className="hidden sm:inline">{day.substring(1)}</span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{renderCalendar()}</tbody>
+        </table>
+      </div>
 
-
-      {/* Legend */}
-      <div className="mt-4 flex justify-center space-x-4 text-sm">
+      <div className="mt-2 md:mt-4 flex flex-wrap justify-center gap-2 md:gap-4 text-xs md:text-sm">
         <div className="flex items-center space-x-1">
-          <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: '#10b981' }}></span>
+          <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#10b981' }}></span>
           <span>Very Good</span>
         </div>
         <div className="flex items-center space-x-1">
-          <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: '#fde68a' }}></span>
+          <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#fde68a' }}></span>
           <span>Good</span>
         </div>
         <div className="flex items-center space-x-1">
-          <span className="inline-block w-4 h-4 rounded" style={{ backgroundColor: '#f97316' }}></span>
+          <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#f97316' }}></span>
           <span>Heavy Booking</span>
         </div>
       </div>
 
       <button
-        className={`py-2 px-12 mt-6 text-white rounded ${selectedRange.start ? 'bg-gradient-to-r from-[#5e0d14] to-[#991e1e]' : 'bg-gray-400'}`}
-      disabled={!selectedDate && (!selectedRange.start || !selectedRange.end)}
-onClick={handleBooking}
+        className={`py-1 px-6 md:py-2 md:px-12 mt-3 md:mt-6 text-white rounded text-sm md:text-base ${
+          selectedRange.start ? 'bg-gradient-to-r from-[#5e0d14] to-[#991e1e]' : 'bg-gray-400'
+        }`}
+        disabled={!selectedDate && (!selectedRange.start || !selectedRange.end)}
+        onClick={handleBooking}
       >
         Book Now
       </button>

@@ -65,9 +65,9 @@ const handleBooking = () => {
   };
 
   const getTooltipText = (category) => {
-    if (category === 'heavy') return 'Very Good (Heavy Booking)';
-    if (category === 'medium') return 'Good Day';
-    if (category === 'light') return 'Auspicious Day';
+    if (category === 'heavy') return 'Heavy Booking';
+    if (category === 'medium') return 'Medium Booking';
+    if (category === 'light') return 'Light Booking';
     return '';
   };
 
@@ -78,7 +78,7 @@ const handleBooking = () => {
   let bgColor = '';
   if (category === 'heavy') bgColor = '#10b981'; // Green
   else if (category === 'medium') bgColor = '#fde68a'; // Yellow
-  else if (category === 'light') bgColor = '#f97316'; // Orange
+  else if (category === 'light') bgColor = '#fe2f32'; // Orange
 
   const isStart = selectedRange.start === currentDate;
   const isEnd = selectedRange.end === currentDate;
@@ -232,15 +232,15 @@ const renderCalendar = () => {
 
       <div className="mt-2 md:mt-4 flex flex-wrap justify-center gap-2 md:gap-4 text-xs md:text-sm">
         <div className="flex items-center space-x-1">
-          <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#10b981' }}></span>
-          <span>Very Good</span>
+          <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#fe2f32' }}></span>
+          <span>Light Booking</span>
         </div>
         <div className="flex items-center space-x-1">
           <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#fde68a' }}></span>
-          <span>Good</span>
+          <span>Medium Booking</span>
         </div>
         <div className="flex items-center space-x-1">
-          <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#f97316' }}></span>
+          <span className="inline-block w-3 h-3 md:w-4 md:h-4 rounded" style={{ backgroundColor: '#10b981' }}></span>
           <span>Heavy Booking</span>
         </div>
       </div>

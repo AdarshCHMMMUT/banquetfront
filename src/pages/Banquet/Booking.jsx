@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Calendar } from 'primereact/calendar';
-import { MultiSelect } from 'primereact/multiselect';
+
 
 import 'primereact/resources/themes/lara-light-indigo/theme.css';  
 import 'primereact/resources/primereact.min.css';  
-import { useNavigate } from "react-router-dom";   
+import axios from 'axios';   
 
 
 
@@ -37,16 +36,22 @@ const Booking = () => {
   
   ];
 
-   const [selected, setSelected] = useState('Rate Plan');
+   
    const [vegNonvegPlan, setVegNonveg] = useState('veg/Non veg');
    const [selectedMenu, setSelectedMenu] = useState([]);
    const [searchTerm, setSearchTerm] = useState("");
-   
-      
-    
-      const [advance, setAdvance] = useState('');
-      const [total, setTotal] = useState('');
-      const balance = ((total) || 0) - ((advance) || 0);
+   const [advance, setAdvance] = useState('');
+   const [total, setTotal] = useState('');
+   const balance = ((total) || 0) - ((advance) || 0);
+
+   const [guestName, setGuestName] = useState("");
+const [email, setEmail] = useState("");
+const [whatsappNo, setWhatsappNo] = useState("");
+const [mobileNo, setMobileNo] = useState("");
+const [noOfPacks, setNoOfPacks] = useState("");
+const [ratePlan, setRatePlan] = useState("Rate Plan");
+const [vegNonVeg, setVegNonVeg] = useState("");
+const [notes, setNotes] = useState("");
 
 
       const filteredMenuItems = menuItems.filter((item) =>
@@ -55,11 +60,7 @@ const Booking = () => {
 
       const toggleSelect = (id) =>{
         const selectedItem = menuItems.find(item => item.id === id);
-
-        
-
-
-        setSelectedMenu((prevSelected) => {
+          setSelectedMenu((prevSelected) => {
           const isalredySelected = prevSelected.some(item => item.id === id);
           if (isalredySelected){
              return prevSelected.filter(item => item.id !== id);
@@ -72,148 +73,239 @@ const Booking = () => {
       };
 
 
+      const handleSubmit = async () => {
+  try {
+    const dataToSend = {
+     guest_name: guestName,
+    email,
+    whatsapp_no: whatsappNo,
+    mobile_no: mobileNo,
+    no_of_packs: parseInt(noOfPacks),
+    rate_plan: ratePlan,
+    veg_non_veg: vegNonVeg,
+    advance_payment: parseFloat(advance),
+    total_payment: parseFloat(total),
+    balance: parseFloat(balance),
+    
+    menu_item: selectedMenu.map(item => item.name), // Or `item.id` if backend needs ID
+    notes,
+   
+  };
+     
+     
+   
+
+    const res = await axios.post('http://localhost:5000/api/bookings', dataToSend);
+    console.log("Success:", res);
+    console.log("Response:", res.data);
+    alert("Booking submitted successfully!");
+  } catch (error) {
+    console.error("Error submitting booking:", error);
+    alert("Failed to submit booking");
+  }
+};
+
+
 
 
  return (
 
     <>
-   
-  
+     <div className="grid grid-cols-2 grid-rows-6 md:grid-cols-3 md:grid-rows-4 gap-8 overflow-auto">
 
-
-
-        <div className="grid grid-cols-2 grid-rows-6 md:grid-cols-3 md:grid-rows-4 gap-8 ">
-          
-            <input type="text" placeholder="Guest Name" className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]" />
-            <input type="email" placeholder="Email" className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"/>
-            <input type="tel" placeholder="Whatsapp Number" className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]" />
-             <input type="tel" placeholder="Mobile Number" className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]" />
-          <input type="number" placeholder="Number Of Packs" className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"/>
-          
-          <div>
-        <select 
-  defaultValue="Pick a color" 
-  className=" focus:text-black w-full focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e] appearance-none"
->
-  <option disabled>Rate Plan</option>
-  <option>Rate Plan 1</option>
-  <option>Rate Plan 2</option>
-  <option>Rate Plan 3</option>
-</select>
-
-          
-          </div>
-           <input
-        type="number"
-        placeholder="Advanced Payment"
-        value={advance}
-        onChange={(e) => setAdvance(e.target.value)}
-       className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
-      />
-      <input
-        type="number"
-        placeholder="Total Payment"
-        value={total}
-        onChange={(e) => setTotal(e.target.value)}
-        className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
-      />
-      <input
-        type="number"
-        placeholder="Balance"
-        value={balance}
-        readOnly
-       className=" focus:text-black focus:placeholder-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
-      />
-
-  <select
-  defaultValue="Pick a color"
-  className="select bg-white text-center w-full text-gray-700 focus:text-black focus:placeholder-black border border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
->
-  <option disabled>Veg /Non Veg</option>
-  <option>Veg</option>
-  <option>Non Veg</option>
-</select>
-
-
-
-{/* You can open the modal using document.getElementById('ID').showModal() method */}
-<button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}>open modal</button>
-<dialog id="my_modal_3" className="modal">
-  <div className="modal-box relative h-[90%] w-full max-w-3xl z-50 pt-0">
-
-   
-    
-   <div className="sticky top-0 left-0 w-full px-4 py-2 bg-white z-10">
-    <form method="dialog">
-      {/* if there is a button in form, it will close the modal */}
-      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-    </form>
-    <h3 className="font-bold text-lg text-center pb-2">Menu Items</h3>
-<label className=" input w-full border border-gray-300 rounded-md text-center py-2 focus-within:outline-none focus-within:ring-2 focus-within:ring-[#991e1e]">
-  <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-    <g
-      strokeLinejoin="round"
-      strokeLinecap="round"
-      strokeWidth="2.5"
-      fill="none"
-      stroke="currentColor"
-    >
-      <circle cx="11" cy="11" r="8"></circle>
-      <path d="m21 21-4.3-4.3"></path>
-    </g>
-  </svg>
-  <input
-    type="search"
-    className="grow text-center text-black placeholder-black focus:outline-none " 
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    placeholder="Search"
-  />
-</label>
-      </div>
-
-
-
-
-
-
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  gap-4 pt-[42px]   ">
-       {filteredMenuItems.map((item) => (
-  <div
-    key={item.id}
-    onClick={() => toggleSelect(item.id)}
-    className={`rounded-md p-4 flex flex-col cursor-pointer
-      ${
-        selectedMenu.some((selected) => selected.id === item.id)
-          ? "border-2 border-[#991e1e] shadow-md"
-          : "border border-gray-300 shadow-xl hover:bg-gray-100 hover:drop-shadow-[0_4px_6px_rgba(153,30,30,0.4)]"
-      }`}
-  >
-    <div className="flex justify-center items-center mb-2">
-      <img
-        className="w-full h-[10rem] aspect-3/2 object-cover rounded-md"
-        src={item.url}
-        alt=""
-      />
-    </div>
-    <p className="font-semibold">{item.name}</p>
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Guest Name</label>
+    <input
+      type="text"
+      value={guestName}
+      onChange={(e) => setGuestName(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
   </div>
-))}
 
-      </div>
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Email</label>
+    <input
+      type="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Whatsapp Number</label>
+    <input
+      type="tel"
+      value={whatsappNo}
+      onChange={(e) => setWhatsappNo(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+    <input
+      type="tel"
+      value={mobileNo}
+      onChange={(e) => setMobileNo(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Number of Packs</label>
+    <input
+      type="number"
+      value={noOfPacks}
+      onChange={(e) => setNoOfPacks(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Rate Plan</label>
+    <select
+      defaultValue="Rate Plan"
+      value={ratePlan}
+      onChange={(e) => setRatePlan(e.target.value)}
+      className="focus:text-black border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e] appearance-none"
+    >
+      <option disabled>Rate Plan</option>
+      <option>Silver Rate Plan</option>
+      <option>Gold Rate Plan</option>
+      <option>Platinum Rate Plan</option>
+    </select>
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Advance Payment</label>
+    <input
+      type="number"
+      value={advance}
+      onChange={(e) => setAdvance(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Total Payment</label>
+    <input
+      type="number"
+      value={total}
+      onChange={(e) => setTotal(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Balance</label>
+    <input
+      type="number"
+      value={balance}
+      readOnly
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Veg / Non-Veg</label>
+    <select
+      value={vegNonvegPlan}
+      onChange={(e) => setVegNonveg(e.target.value)}
+      className="bg-white text-center text-gray-700 focus:text-black border border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    >
+      <option disabled>Veg - Non Veg</option>
+      <option>Veg</option>
+      <option>Non-Veg</option>
+    </select>
+  </div>
+
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Menu Items</label>
+    <button
+      className="btn bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white py-2"
+      onClick={() => document.getElementById('my_modal_3').showModal()}
+    >
+      Open Menu Modal
+    </button>
+
+    <dialog id="my_modal_3" className="modal">
+  <div className="modal-box relative h-[90%] w-full max-w-3xl z-50 pt-0">
+    <div className="sticky top-0 left-0 w-full px-4 py-2 bg-white z-10">
+      <form method="dialog">
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+      <h3 className="font-bold text-lg text-center pb-2">Menu Items</h3>
+      <label className="text-sm font-medium text-gray-700 mb-1 block">Search Menu</label>
+      <label className="input w-full border border-gray-300 rounded-md text-center py-2 focus-within:outline-none focus-within:ring-2 focus-within:ring-[#991e1e]">
+        <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </g>
+        </svg>
+        <input
+          type="search"
+          className="grow text-center text-black placeholder-black focus:outline-none"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search"
+        />
+      </label>
+    </div>
+
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-[42px]">
+      {filteredMenuItems.map((item) => (
+        <div
+          key={item.id}
+          onClick={() => toggleSelect(item.id)}
+          className={`rounded-md p-4 flex flex-col cursor-pointer ${
+            selectedMenu.some((selected) => selected.id === item.id)
+              ? "border-2 border-[#991e1e] shadow-md"
+              : "border border-gray-300 shadow-xl hover:bg-gray-100 hover:drop-shadow-[0_4px_6px_rgba(153,30,30,0.4)]"
+          }`}
+        >
+          <div className="flex justify-center items-center mb-2">
+            <img className="w-full h-[10rem] object-cover rounded-md" src={item.url} alt="" />
+          </div>
+          <p className="font-semibold text-center">{item.name}</p>
+        </div>
+      ))}
+    </div>
+
+    <form method="dialog" className="flex justify-center items-center mt-6">
+      <button type="submit" className="btn bg-gradient-to-r from-[#5e0d14] to-[#991e1e] py-2 w-[40%] md:w-[20%] text-white">
+        Submit
+      </button>
+    </form>
   </div>
 </dialog>
 
+    
+  </div>
 
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">Notes</label>
+    <input
+      type="text"
+      value={notes}
+      onChange={(e) => setNotes(e.target.value)}
+      className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+    />
+  </div>
 
 </div>
 
 
 
 
-<div className="flex justify-center items-center mt-6">
-<button className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] py-2 w-[40%] md:w-[20%] text-white ">Submit</button>
-        </div>
+
+<form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex justify-center items-center mt-6">
+  <button type="submit" className="bg-gradient-to-r from-[#5e0d14] to-[#991e1e] py-2 w-[40%] md:w-[20%] text-white">
+    Submit
+  </button>
+</form>
 
        
    

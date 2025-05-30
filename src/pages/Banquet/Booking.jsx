@@ -6,7 +6,6 @@ import axios from 'axios';
 const Booking = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [selectedMenu, setSelectedMenu] = useState([]);
-  // const [searchTerm, setSearchTerm] = useState("");
   const [advance, setAdvance] = useState('');
   const [total, setTotal] = useState('');
   const [guestName, setGuestName] = useState("");
@@ -17,11 +16,10 @@ const Booking = () => {
   const [ratePlan, setRatePlan] = useState("Rate Plan");
   const [vegNonVeg, setVegNonVeg] = useState("");
   const [notes, setNotes] = useState("");
-    const [expandedCategory, setExpandedCategory] = useState(null);
-
+  const [expandedCategory, setExpandedCategory] = useState(null);
   const balance = (parseFloat(total) || 0) - (parseFloat(advance) || 0);
 
-  // 🟢 Async menu fetching using useEffect
+
   useEffect(() => {
     async function fetchMenu() {
       try {
@@ -35,35 +33,34 @@ const Booking = () => {
         setMenuItems([]);
       }
     }
-
     fetchMenu();
   }, []);
   const toggleSelect = (category, itemName) => {
-  setSelectedMenu(prev => {
-    const current = prev[category] || [];
-    const alreadySelected = current.includes(itemName);
+    setSelectedMenu(prev => {
+      const current = prev[category] || [];
+      const alreadySelected = current.includes(itemName);
 
-    if (alreadySelected) {
-      return {
-        ...prev,
-        [category]: current.filter(name => name !== itemName),
-      };
-    } else {
-      if (current.length >= 3) {
-        alert("Only 3 selections allowed per category.");
-        return prev;
+      if (alreadySelected) {
+        return {
+          ...prev,
+          [category]: current.filter(name => name !== itemName),
+        };
+      } else {
+        if (current.length >= 3) {
+          alert("Only 3 selections allowed per category.");
+          return prev;
+        }
+        return {
+          ...prev,
+          [category]: [...current, itemName],
+        };
       }
-      return {
-        ...prev,
-        [category]: [...current, itemName],
-      };
-    }
-  });
-};
+    });
+  };
 
 
-  // 📨 Submit booking
   const handleSubmit = async () => {
+    console.log("Submitting booking with data:")
     try {
       const dataToSend = {
         guest_name: guestName,
@@ -76,22 +73,19 @@ const Booking = () => {
         advance_payment: parseFloat(advance),
         total_payment: parseFloat(total),
         balance: parseFloat(balance),
-        menu_item: selectedMenu.map(item => item.name),
+        items: selectedMenu,
         notes,
       };
-
-      const res = await axios.post('http://localhost:4000/api/bookings', dataToSend);
+      console.log("Data to send:", dataToSend.items);
+      const res = await axios.post('http://localhost:4000/api/user/bookhall', dataToSend);
       console.log("Booking success:", res.data);
       alert("Booking submitted successfully!");
     } catch (error) {
-      console.error("Error submitting booking:", error);
+      console.log(selectedMenu)
+      console.error("Error submitting booking:", error.message, selectedMenu);
       alert("Failed to submit booking");
     }
   };
-
-
-
-
 
   return (
 
@@ -223,51 +217,44 @@ const Booking = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 pt-[42px]">
-            {menuItems.map((categoryBlock, index) => (
-  <div key={categoryBlock.category} className="border rounded-lg mb-4">
-    {/* Category Header */}
-    <div
-      className="bg-gray-200 p-4 cursor-pointer font-semibold flex justify-between items-center"
-      onClick={() =>
-        setExpandedCategory(expandedCategory === index ? null : index)
-      }
-    >
-      <span>{categoryBlock.category}</span>
-      <span>
-        ({selectedMenu[categoryBlock.category]?.length || 0}/3 selected)
-      </span>
-    </div>
-
-    {/* Items Grid */}
-    {expandedCategory === index && (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-        {categoryBlock.items.map((item, idx) => (
-          <div
-            key={`${item.name}-${idx}`} // added idx to avoid duplicate key warning
-            onClick={() => toggleSelect(categoryBlock.category, item.name)}
-            className={`cursor-pointer border rounded-xl p-4 flex items-center space-x-4 transition ${
-              selectedMenu[categoryBlock.category]?.includes(item.name)
-                ? 'bg-blue-100 border-blue-500 shadow-md'
-                : 'hover:bg-gray-100'
-            }`}
-          >
-            {item.image && (
-              <img
-                src={item.image.trim()} // trim leading space
-                alt={item.name}
-                className="w-12 h-12 object-cover rounded"
-                onError={(e) =>
-                  (e.target.src = 'https://via.placeholder.com/48')
-                }
-              />
-            )}
-            <span className="font-medium">{item.name}</span>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-))}
+                {menuItems.map((categoryBlock, index) => (
+                  <div key={categoryBlock.category} className="border rounded-lg mb-4">
+                    <div
+                      className="bg-gray-200 p-4 cursor-pointer font-semibold flex justify-between items-center"
+                      onClick={() =>
+                        setExpandedCategory(expandedCategory === index ? null : index)
+                      }
+                    >
+                      <span>{categoryBlock.category}</span>
+                      <span>
+                        ({selectedMenu[categoryBlock.category]?.length || 0}/3 selected)
+                      </span>
+                    </div>
+                    {expandedCategory === index && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+                        {categoryBlock.items.map((item, idx) => (
+                          <div
+                            key={`${item.name}-${idx}`}
+                            onClick={() => toggleSelect(categoryBlock.category, item.name)}
+                            className={`cursor-pointer border rounded-xl p-4 flex items-center space-x-4 transition ${selectedMenu[categoryBlock.category]?.includes(item.name)
+                                ? 'bg-blue-100 border-blue-500 shadow-md'
+                                : 'hover:bg-gray-100'
+                              }`}
+                          >
+                            {item.image && (
+                              <img
+                                src={item.image.trim()}
+                                alt={item.name}
+                                className="w-12 h-12 object-cover rounded"
+                              />
+                            )}
+                            <span className="font-medium">{item.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
 
 
               </div>

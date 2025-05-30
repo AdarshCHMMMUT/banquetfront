@@ -1,27 +1,41 @@
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-
 import { useEffect, useState } from "react";
 import { AiFillCloseCircle, AiOutlineMenu } from "react-icons/ai";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-
 import Booking from "./pages/Banquet/Booking";
-import LaganCalendar from "./pages/Banquet/LaganCalender";
+import ListCategory from "./pages/Category/ListCategory";
+import UpdateCategory from "./pages/Category/UpdateCategory";
+import AddCategory from "./pages/Category/AddCategory"; // Import AddCategory
 import logo from "./assets/pcs.png";
+
 const App = () => {
+
+
   const navigate = useNavigate();
   const location = useLocation();
   const [activeLink, setActiveLink] = useState(() => {
-  const path = window.location.pathname;
-  if (path === "/booking") return "booking";
-  return "dashboard";
-});
+    const path = window.location.pathname;
+    if (path === "/booking") return "booking";
+    if (path === "/listcategory") return "listcategory";
+    if (path === "/updatecategory") return "updatecategory";
+    if (path === "/addcategory") return "addcategory"; // Add active link for addcategory
+    return "dashboard";
+  });
+
+
+  // Retrieve user information from localStorage
   const currentUser = localStorage.getItem("currentUser");
   const role = localStorage.getItem("role");
   const name = localStorage.getItem("name");
-  const moduleAssigned = JSON.parse(localStorage.getItem("module"));
   const [ml, setML] = useState(false);
-  console.log(name);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate("/login");
+    }
+  }, [currentUser,navigate]);
+
   const handleLogout = async () => {
     try {
       localStorage.clear();
@@ -30,28 +44,30 @@ const App = () => {
       console.log(error);
     }
   };
-  console.log(currentUser);
+
+
   useEffect(() => {
-    if (!currentUser) {
-      navigate("/login");
-    }
-  }, [currentUser]);
-  useEffect(() => {
-    if (location.pathname == "") {
+    const path = location.pathname;
+    if (path === "/booking") {
+      setActiveLink("booking");
+    } else if (path === "/listcategory") {
+      setActiveLink("listcategory");
+    } else if (path.startsWith("/updatecategory")) {
+      setActiveLink("updatecategory");
+    } else if (path === "/addcategory") {
+      setActiveLink("addcategory"); // Update active link for addcategory
+    } else {
       setActiveLink("dashboard");
     }
-      
   }, [location.pathname]);
+
 
   const setMl = () => {
     if (window.innerWidth < 1023) {
-      if (ml == false) {
-        setML(true);
-      } else {
-        setML(false);
-      }
+      setML(!ml);
     }
   };
+
   return (
     <>
       {currentUser ? (
@@ -63,7 +79,7 @@ const App = () => {
                 : "fixed top-0 z-10 ml-[-100%] flex h-screen w-full flex-col justify-between border-r bg-white px-6 pb-3 transition duration-300 md:w-4/12 lg:ml-0 lg:w-[25%] xl:w-[20%] 2xl:w-[15%] dark:bg-gray-800 dark:border-gray-700"
             }
           >
-            <div className=" overflow-y-auto z-60 h-[90vh] overflow-x-hidden">
+            <div className="overflow-y-auto z-60 h-[90vh] overflow-x-hidden">
               <div className="-mx-6 z-60 px-6 py-4">
                 {window.innerWidth < 1023 && (
                   <div className="flex items-center justify-between">
@@ -75,7 +91,7 @@ const App = () => {
                     </h5>
                     <button
                       onClick={handleLogout}
-                      className="group flex items-center space-x-4 rounded-md px-4 py-5    text-black  "
+                      className="group flex items-center space-x-4 rounded-md px-4 py-3 text-black"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -126,16 +142,12 @@ const App = () => {
                     href="#"
                     aria-label="dashboard"
                     className={
-                      activeLink == "dashboard"
-                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-[#5e0d14] to-[#991e1e] px-1 py-2 text-white "
-                        : "relative flex items-center space-x-4 rounded-xl px-1 py-2  text-gray-600"
+                      activeLink === "dashboard"
+                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-[#5e0d14] to-[#991e1e] px-1 py-2 text-white"
+                        : "relative flex items-center space-x-4 rounded-xl px-1 py-2 text-gray-600"
                     }
                   >
-                    <svg
-                      className="-ml-1 h-6 w-6"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
+                    <svg className="-ml-1 h-6 w-6" viewBox="0 0 24 24" fill="none">
                       <path
                         d="M6 8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8ZM6 15a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-1Z"
                         className="dark:fill-slate-600 fill-current text-[#ff4242]"
@@ -152,7 +164,7 @@ const App = () => {
                     <span className="-mr-1 font-medium">Dashboard</span>
                   </a>
                 </li>
-<li
+                <li
                   onClick={() => {
                     setActiveLink("booking");
                     navigate("/booking");
@@ -163,16 +175,12 @@ const App = () => {
                     href="#"
                     aria-label="booking"
                     className={
-                      activeLink == "booking"
-                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-[#5e0d14] to-[#991e1e] px-1 py-2 text-white "
-                        : "relative flex items-center space-x-4 rounded-xl px-1 py-2  text-gray-600"
+                      activeLink === "booking"
+                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-[#5e0d14] to-[#991e1e] px-1 py-2 text-white"
+                        : "relative flex items-center space-x-4 rounded-xl px-1 py-2 text-gray-600"
                     }
                   >
-                    <svg
-                      className="-ml-1 h-6 w-6"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
+                    <svg className="-ml-1 h-6 w-6" viewBox="0 0 24 24" fill="none">
                       <path
                         d="M6 8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8ZM6 15a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-1Z"
                         className="dark:fill-slate-600 fill-current text-[#ff4242]"
@@ -189,7 +197,40 @@ const App = () => {
                     <span className="-mr-1 font-medium">Booking</span>
                   </a>
                 </li>
-                
+                <li
+                  onClick={() => {
+                    setActiveLink("listcategory");
+                    navigate("/listcategory");
+                    setMl();
+                  }}
+                >
+                  <a
+                    href="#"
+                    aria-label="listcategory"
+                    className={
+                      activeLink === "listcategory"
+                        ? "relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-[#5e0d14] to-[#991e1e] px-1 py-2 text-white"
+                        : "relative flex items-center space-x-4 rounded-xl px-1 py-2 text-gray-600"
+                    }
+                  >
+                    <svg className="-ml-1 h-6 w-6" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M6 8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8ZM6 15a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-1Z"
+                        className="dark:fill-slate-600 fill-current text-[#ff4242]"
+                      ></path>
+                      <path
+                        d="M13 8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2V8Z"
+                        className="fill-current text-[#ff4242] group-hover:text-[#ed5656]"
+                      ></path>
+                      <path
+                        d="M13 15a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-1Z"
+                        className="fill-current group-hover:text-[#ed5656]"
+                      ></path>
+                    </svg>
+                    <span className="-mr-1 font-medium">List Category</span>
+                  </a>
+                </li>
+
               </ul>
             </div>
 
@@ -222,8 +263,8 @@ const App = () => {
             <div
               className={
                 window.innerWidth < 768
-                  ? " sticky md:z-50 top-0 h-16 border-b bg-white dark:bg-gray-800 dark:border-gray-700 lg:py-2.5"
-                  : "sticky  md:z-50 top-0 h-16 border-b bg-white dark:bg-gray-800 dark:border-gray-700 lg:py-2.5"
+                  ? "sticky md:z-50 top-0 h-16 border-b bg-white dark:bg-gray-800 dark:border-gray-700 lg:py-2.5"
+                  : "sticky md:z-50 top-0 h-16 border-b bg-white dark:bg-gray-800 dark:border-gray-700 lg:py-2.5"
               }
             >
               <div className="flex items-center justify-between space-x-4 px-4 2xl:container h-full">
@@ -235,7 +276,7 @@ const App = () => {
                 </h5>
                 <h5
                   onClick={() => setMl()}
-                  className="text-2xl lg:hidden font-medium text-gray-600  dark:text-white"
+                  className="text-2xl lg:hidden font-medium text-gray-600 dark:text-white"
                 >
                   <AiOutlineMenu />
                 </h5>
@@ -246,18 +287,18 @@ const App = () => {
             <div className="px-6 pt-6 bg-white">
               <Routes>
                 <Route path="/" element={<Home />} />
-                 <Route path="/booking" element={<Booking />} />
-               
+                <Route path="/booking" element={<Booking />} />
+                <Route path="/listcategory" element={<ListCategory />} />
+                <Route path="/updatecategory/:id" element={<UpdateCategory />} />
+                <Route path="/addcategory" element={<AddCategory />} /> {/* Add new route */}
               </Routes>
             </div>
           </div>
         </section>
       ) : (
-        <>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+        </Routes>
       )}
     </>
   );

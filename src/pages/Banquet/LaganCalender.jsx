@@ -1,21 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 function LaganCalendar() {
-  const [dates, setDates] = useState(null);
   const [hoveredDate, setHoveredDate] = useState(null);
+  console.log(hoveredDate);
   const [selectedDate, setSelectedDate] = useState(null);
   const calendarRef = useRef(null);
   const [selectedRange, setSelectedRange] = useState({ start: null, end: null });
-  const [month, setMonth] = useState(4); // May = 4 (0-indexed)
+  const [month, setMonth] = useState(4); 
   const [year, setYear] = useState(2025);
-
   const navigate = useNavigate();
 
   useEffect(() => {
   const handleClickOutside = (event) => {
     if (calendarRef.current && !calendarRef.current.contains(event.target)) {
-      setHoveredDate(null); // Clear hover state
+      setHoveredDate(null); 
     }
   };
 
@@ -26,12 +25,15 @@ function LaganCalendar() {
 }, []);
 
 const handleBooking = () => {
-  if (selectedRange.start && selectedRange.end) {
-    navigate(`/book?start=${selectedRange.start}&end=${selectedRange.end}`);
+  if (selectedRange?.start && selectedRange?.end) {
+    navigate(`/booking?start=${selectedRange.start}&end=${selectedRange.end}`);
   } else if (selectedDate) {
-    navigate(`/book/${selectedDate}`);
+    navigate('/booking?date=' + selectedDate);
+  } else {
+    console.warn("No date or range selected.");
   }
 };
+
 
   const format = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 

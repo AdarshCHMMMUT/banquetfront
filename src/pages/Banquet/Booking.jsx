@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import axios from 'axios';
+import { useLocation } from "react-router-dom";
 
 const Booking = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -18,7 +19,10 @@ const Booking = () => {
   const [notes, setNotes] = useState("");
   const [expandedCategory, setExpandedCategory] = useState(null);
   const balance = (parseFloat(total) || 0) - (parseFloat(advance) || 0);
-
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const startDate = queryParams.get('start');
+  const endDate = queryParams.get('end');
 
   useEffect(() => {
     async function fetchMenu() {
@@ -75,9 +79,11 @@ const Booking = () => {
         balance: parseFloat(balance),
         items: selectedMenu,
         notes,
+        startDate,
+        endDate
       };
       console.log("Data to send:", dataToSend.items);
-      const res = await axios.post('http://localhost:4000/api/user/bookhall', dataToSend);
+      const res = await axios.post('https://banquet-seven.vercel.app/api/user/bookhall', dataToSend);
       console.log("Booking success:", res.data);
       alert("Booking submitted successfully!");
     } catch (error) {
@@ -140,7 +146,28 @@ const Booking = () => {
             className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
           />
         </div>
+         
+          <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Startdate</label>
+          <input
+            type="date"
+            value={startDate}
+            readOnly
+            className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+          />
+        </div>
 
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Enddate</label>
+          <input
+            type="date"
+            value={endDate}
+            readOnly
+            className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
+          />
+        </div>
+
+        
         <div className="flex flex-col">
           <label className="text-sm font-medium text-gray-700 mb-1">Rate Plan</label>
           <select

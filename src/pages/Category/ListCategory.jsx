@@ -14,19 +14,20 @@ const ListCategory = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
   const [productToDelete, setProductToDelete] = useState(null);
 
   const fetchCategories = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/api/getAllCategory");
-      const data = response.data;
+      const response = await axios.get("https://banquet-seven.vercel.app/api/user/vegmenu");
+      console.log(response.data.vegMenu);
+      const data = response.data.vegMenu;
       setUserData(data);
       setTotalPages(Math.ceil(data.length / ITEMS_PER_PAGE));
     } catch (error) {
       toast.error("Failed to load categories");
-      console.error(error);
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -74,21 +75,21 @@ const ListCategory = () => {
     setProductToDelete(null);
   };
 
-  const handleSearch = useCallback(() => {
-    if (!searchQuery.trim()) {
-      fetchCategories();
-    } else {
-      const filtered = userData.filter((item) =>
-        item.CategoryName.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setUserData(filtered);
-      setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
-    }
-  }, [searchQuery, fetchCategories, userData]);
+  // const handleSearch = useCallback(() => {
+  //   if (!searchQuery.trim()) {
+  //     fetchCategories();
+  //   } else {
+  //     const filtered = userData.filter((item) =>
+  //       item.CategoryName.toLowerCase().includes(searchQuery.toLowerCase())
+  //     );
+  //     setUserData(filtered);
+  //     setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  //   }
+  // }, [searchQuery, fetchCategories, userData]);
 
-  useEffect(() => {
-    handleSearch();
-  }, [handleSearch]);
+  // useEffect(() => {
+  //   handleSearch();
+  // }, [handleSearch]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -96,27 +97,27 @@ const ListCategory = () => {
     }
   };
 
-  const handleDownloadCSV = () => {
-    const table = tableRef.current;
-    if (!table) return;
-    const rows = Array.from(table.querySelectorAll("tr"));
-    const csv = rows
-      .map((row) =>
-        Array.from(row.querySelectorAll("th, td"))
-          .map((cell) => `"${cell.innerText.replace(/"/g, '""')}"`)
-          .join(",")
-      )
-      .join("\n");
+  // const handleDownloadCSV = () => {
+  //   const table = tableRef.current;
+  //   if (!table) return;
+  //   const rows = Array.from(table.querySelectorAll("tr"));
+  //   const csv = rows
+  //     .map((row) =>
+  //       Array.from(row.querySelectorAll("th, td"))
+  //         .map((cell) => `"${cell.innerText.replace(/"/g, '""')}"`)
+  //         .join(",")
+  //     )
+  //     .join("\n");
 
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "Category-Detail.csv";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  //   const blob = new Blob([csv], { type: "text/csv" });
+  //   const url = URL.createObjectURL(blob);
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = "Category-Detail.csv";
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
 
   const renderPagination = () => (
     <nav className="mt-12 flex justify-center">
@@ -156,16 +157,16 @@ const ListCategory = () => {
   return (
     <>
       <Toaster />
-      <div className="flex justify-between items-center">
+      {/* <div className="flex justify-between items-center">
         <button onClick={handleDownloadCSV} className="btn btn-success text-white">
           Download CSV
         </button>
         <Link to="/addcategory" className="btn text-white bg-gradient-to-r from-[#5e0d14] to-[#991e1e]">
           + Add Category
         </Link>
-      </div>
+      </div> */}
 
-      <div className="form-control relative top-6">
+      {/* <div className="form-control relative top-6">
         <input
           type="text"
           value={searchQuery}
@@ -184,7 +185,7 @@ const ListCategory = () => {
             x
           </span>
         )}
-      </div>
+      </div> */}
 
       <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto">
         {!loading ? (
@@ -201,7 +202,7 @@ const ListCategory = () => {
                 {userData.map((item) => (
                   <tr key={item._id}>
                     <td className="px-6 py-4">
-                      <div className="font-bold">{item.CategoryName}</div>
+                      <div className="font-bold">{item.category}</div>
                     </td>
                     <td className="px-6 py-4">
                       <Link to={`/updatecategory/${item._id}`} className="btn btn-info text-white ml-2 btn-xs">

@@ -1,5 +1,5 @@
- import { Link } from "react-router-dom";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { ColorRing } from "react-loader-spinner";
 import SlideToggle from "../toggle/SlideToggle";
 import { Toaster, toast } from "react-hot-toast";
@@ -14,15 +14,15 @@ const ListCategory = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  // const [searchQuery, setSearchQuery] = useState("");
   const [productToDelete, setProductToDelete] = useState(null);
+  const [isEditingid, setIsEditingid] = useState(null);
+  const [name, setName] = useState("");
 
-  const fetchCategories = useCallback(async () => {
+  const fetchCategories = async () => {
     setLoading(true);
     try {
       const response = await axios.get("https://banquet-seven.vercel.app/api/user/vegmenu");
-      console.log(response.data.vegMenu);
-      const data = response.data.vegMenu;
+      const data = Array.isArray(response.data.vegMenu) ? response.data.vegMenu : [];
       setUserData(data);
       setTotalPages(Math.ceil(data.length / ITEMS_PER_PAGE));
     } catch (error) {
@@ -31,11 +31,11 @@ const ListCategory = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+  }, []);
 
   const handleToggleStatus = (id, currentStatus) => {
     const updatedStatus = !currentStatus;
@@ -53,18 +53,52 @@ const ListCategory = () => {
     toast.success("Category deleted successfully");
   };
 
+  const handleEdit = (item) => {
+    setIsEditingid(item._id);
+    setName(item.CategoryName);
+  };
+
+  const handleSaveEdit = async (id) => {
+    try {
+      await axios.post('http://localhost:4000/api/user/updatecategorynameinveg', {
+        id,
+        newCategory: name,
+      });
+      setUserData(userData.map((item) =>
+        item._id === id ? { ...item, CategoryName: name } : item
+      ));
+      setIsEditingid(null);
+      toast.success("Category updated successfully");
+    } catch (error) {
+      toast.error("Failed to update category");
+      console.error(error.message);
+    }
+  };
+
   const handleDeleteModal = (product) => {
     setProductToDelete(product);
     setDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (productToDelete === "delete-all") {
-      setUserData([]);
-      setTotalPages(1);
-      toast.success("All categories deleted");
+      try {
+        await axios.delete('https://banquet-seven.vercel.app/api/user/vegmenu/delete-all');
+        setUserData([]);
+        setTotalPages(1);
+        toast.success("All categories deleted");
+      } catch (error) {
+        toast.error("Failed to delete all categories");
+        console.error(error.message);
+      }
     } else {
-      handleDelete(productToDelete._id);
+      try {
+        await axios.delete(`https://banquet-seven.vercel.app/api/user/vegmenu/${productToDelete._id}`);
+        handleDelete(productToDelete._id);
+      } catch (error) {
+        toast.error("Failed to delete category");
+        console.error(error.message);
+      }
     }
     setDeleteModalOpen(false);
     setProductToDelete(null);
@@ -75,49 +109,17 @@ const ListCategory = () => {
     setProductToDelete(null);
   };
 
-  // const handleSearch = useCallback(() => {
-  //   if (!searchQuery.trim()) {
-  //     fetchCategories();
-  //   } else {
-  //     const filtered = userData.filter((item) =>
-  //       item.CategoryName.toLowerCase().includes(searchQuery.toLowerCase())
-  //     );
-  //     setUserData(filtered);
-  //     setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  //   }
-  // }, [searchQuery, fetchCategories, userData]);
-
-  // useEffect(() => {
-  //   handleSearch();
-  // }, [handleSearch]);
-
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
-  // const handleDownloadCSV = () => {
-  //   const table = tableRef.current;
-  //   if (!table) return;
-  //   const rows = Array.from(table.querySelectorAll("tr"));
-  //   const csv = rows
-  //     .map((row) =>
-  //       Array.from(row.querySelectorAll("th, td"))
-  //         .map((cell) => `"${cell.innerText.replace(/"/g, '""')}"`)
-  //         .join(",")
-  //     )
-  //     .join("\n");
-
-  //   const blob = new Blob([csv], { type: "text/csv" });
-  //   const url = URL.createObjectURL(blob);
-  //   const link = document.createElement("a");
-  //   link.href = url;
-  //   link.download = "Category-Detail.csv";
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedData = userData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  console.log("Paginated Data:", paginatedData);
+  // console.log(paginatedData[1].cateogry);
+  // console.log(paginatedData);
 
   const renderPagination = () => (
     <nav className="mt-12 flex justify-center">
@@ -157,39 +159,10 @@ const ListCategory = () => {
   return (
     <>
       <Toaster />
-      {/* <div className="flex justify-between items-center">
-        <button onClick={handleDownloadCSV} className="btn btn-success text-white">
-          Download CSV
-        </button>
-        <Link to="/addcategory" className="btn text-white bg-gradient-to-r from-[#5e0d14] to-[#991e1e]">
-          + Add Category
-        </Link>
-      </div> */}
-
-      {/* <div className="form-control relative top-6">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search By Category Name"
-          className="input input-bordered w-full border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
-        />
-        {searchQuery && (
-          <span
-            onClick={() => {
-              setSearchQuery("");
-              fetchCategories();
-            }}
-            className="cursor-pointer bg-red-600 text-white px-2 py-1 rounded-full absolute right-3 top-1/2 -translate-y-1/2"
-          >
-            x
-          </span>
-        )}
-      </div> */}
-
+      
       <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto">
         {!loading ? (
-          userData.length > 0 ? (
+          paginatedData.length > 0 ? (
             <table ref={tableRef} className="w-full table-auto text-sm text-left">
               <thead className="bg-gray-50 text-gray-600 font-medium border-b">
                 <tr>
@@ -199,21 +172,54 @@ const ListCategory = () => {
                 </tr>
               </thead>
               <tbody className="text-gray-600 divide-y">
-                {userData.map((item) => (
+                {paginatedData.map((item) => (
                   <tr key={item._id}>
                     <td className="px-6 py-4">
-                      <div className="font-bold">{item.category}</div>
+                      <div className="font-semibold">
+                        {isEditingid === item._id ? (
+                          <>
+                            <input
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              className="border px-2 py-1 rounded"
+                            />
+                            <button
+                              onClick={() => handleSaveEdit(item._id)}
+                              className="btn btn-success text-white ml-2 btn-xs"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setIsEditingid(null)}
+                              className="btn btn-warning text-white ml-2 btn-xs"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <div className="font-bold">{item.category}</div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
-                      <Link to={`/updatecategory/${item._id}`} className="btn btn-info text-white ml-2 btn-xs">
+                      <Link
+                        className="btn btn-info text-white ml-2 btn-xs"
+                        onClick={() => handleEdit(item)}
+                      >
                         Edit
                       </Link>
-                      <button onClick={() => handleDeleteModal(item)} className="btn btn-error text-white ml-2 btn-xs">
+                      <button
+                        onClick={() => handleDeleteModal(item)}
+                        className="btn btn-error text-white ml-2 btn-xs"
+                      >
                         Delete
                       </button>
                     </td>
                     <td>
-                      <SlideToggle isOn={item.status} onToggle={() => handleToggleStatus(item._id, item.status)} />
+                      <SlideToggle
+                        isOn={item.status}
+                        onToggle={() => handleToggleStatus(item._id, item.status)}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -226,7 +232,12 @@ const ListCategory = () => {
           )
         ) : (
           <div className="flex justify-center mt-12">
-            <ColorRing visible={true} height="80" width="80" colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]} />
+            <ColorRing
+              visible={true}
+              height="80"
+              width="80"
+              colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+            />
           </div>
         )}
       </div>
@@ -240,10 +251,16 @@ const ListCategory = () => {
             <h3 className="text-lg font-medium text-gray-900">Delete Confirmation</h3>
             <p className="mt-2">Are you sure you want to delete this item?</p>
             <div className="mt-4 flex justify-end">
-              <button onClick={confirmDelete} className="bg-red-600 text-white px-4 py-2 rounded-md mr-2">
+              <button
+                onClick={confirmDelete}
+                className="bg-red-600 text-white px-4 py-2 rounded-md mr-2"
+              >
                 Yes, Delete
               </button>
-              <button onClick={cancelDelete} className="bg-white border border-gray-300 px-4 py-2 rounded-md">
+              <button
+                onClick={cancelDelete}
+                className="bg-white border border-gray-300 px-4 py-2 rounded-md"
+              >
                 No, Cancel
               </button>
             </div>

@@ -68,17 +68,6 @@ const data = {
             placeholder="Category"
           />
         </div>
-        {/* <div className="form-control">
-          <label htmlFor="">Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            className="input input-bordered"
-            onChange={(e) => setImage(e.target.files[0])}
-            placeholder="Image"
-          />
-        </div> */}
-
         <div className="form-control">
   <label htmlFor="color-select">Veg / Non-veg</label>
   <select
@@ -94,9 +83,7 @@ const data = {
     
   </select>
 </div>
-        {/* {image && (
-          <img src={URL.createObjectURL(image)} width={250} alt="Preview" />
-        )} */}
+        
       </div>
       <div className="mt-4 flex justify-center">
         <button

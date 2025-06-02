@@ -21,8 +21,14 @@ const Booking = () => {
   const balance = (parseFloat(total) || 0) - (parseFloat(advance) || 0);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const startDate = queryParams.get('start');
-  const endDate = queryParams.get('end');
+let startDate = queryParams.get('start');
+let endDate = queryParams.get('end');
+const date = queryParams.get('date');
+if (!startDate && !endDate && date) {
+  startDate = date;
+  endDate = date;
+}
+
 
   useEffect(() => {
     async function fetchMenu() {

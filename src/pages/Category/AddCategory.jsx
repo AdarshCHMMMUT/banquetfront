@@ -29,7 +29,7 @@ const data = {
 
     try {
       axios
-        .post(`http://localhost:5000/api/create`, data)
+        .post(`http://:5000/api/create`, data)
         .then((res) => {
           if (res.data) {
             toast.success("Category Added Successfully!");

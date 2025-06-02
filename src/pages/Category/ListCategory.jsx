@@ -60,7 +60,7 @@ const ListCategory = () => {
 
   const handleSaveEdit = async (id) => {
     try {
-      await axios.post('http://localhost:4000/api/user/updatecategorynameinveg', {
+      await axios.post('https://banquet-seven.vercel.app/api/user/updatecategorynameinveg', {
         id,
         newCategory: name,
       });

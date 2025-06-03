@@ -381,8 +381,8 @@ const ListCategory = () => {
     try {
       const endpoint =
         menuType === "Veg"
-          ? "https://banquet-seven.vercel.app/api/user/vegmenu"
-          : "https://banquet-seven.vercel.app/api/user/nonvegmenu";
+          ? "https://banquet-seven.vercel.app/api/user/addvegmenu"
+          : "https://banquet-seven.vercel.app/api/user/addnonvegmenu";
       const response = await axios.post(endpoint, {
         category,
         name: newItemName,

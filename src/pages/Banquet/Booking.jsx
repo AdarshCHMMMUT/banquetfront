@@ -6,7 +6,7 @@
 
 // const Booking = () => {
 //   const [menuItems, setMenuItems] = useState([]);
-//   const [selectedMenu, setSelectedMenu] = useState([]);
+//   const [selectedMenu, setSelectedMenu] = useState({});
 //   const [advance, setAdvance] = useState('');
 //   const [total, setTotal] = useState('');
 //   const [guestName, setGuestName] = useState("");
@@ -21,53 +21,135 @@
 //   const balance = (parseFloat(total) || 0) - (parseFloat(advance) || 0);
 //   const location = useLocation();
 //   const queryParams = new URLSearchParams(location.search);
-// let startDate = queryParams.get('start');
-// let endDate = queryParams.get('end');
-// const date = queryParams.get('date');
-// if (!startDate && !endDate && date) {
-//   startDate = date;
-//   endDate = date;
-// }
+//   let startDate = queryParams.get('start');
+//   let endDate = queryParams.get('end');
+//   const date = queryParams.get('date');
+//   if (!startDate && !endDate && date) {
+//     startDate = date;
+//     endDate = date;
+//   }
 
+//   // Define selection limits based on rate plan and veg/non-veg
+//   const getSelectionLimits = (category) => {
+//     const limits = {
+//       "Silver Rate Plan": {
+//         "Starter Veg": vegNonVeg === "Veg" ? 3 : 2,
+//         "Starter Non-Veg": vegNonVeg === "Non-Veg" ? 1 : 0,
+//         "Soup Veg": 1,
+//         "Soup Non-Veg": 0,
+//         "Non-Veg Main Course": vegNonVeg === "Non-Veg" ? 1 : 0,
+//         "Paneer": 1,
+//         "Vegetable": 2,
+//         "Bhaja": 0,
+//         "Lentil": 1,
+//         "Rice": 1,
+//         "Indian Breads": 3,
+//         "Salad": 2,
+//         "Curd": 1,
+//         "Desserts": 1,
+//         "Ice Cream": 1,
+//       },
+//       "Gold Rate Plan": {
+//         "Starter Veg": vegNonVeg === "Veg" ? 4 : 3,
+//         "Starter Non-Veg": vegNonVeg === "Non-Veg" ? 2 : 0,
+//         "Soup Veg": vegNonVeg === "Veg" ? 2 : 1,
+//         "Soup Non-Veg": vegNonVeg === "Non-Veg" ? 1 : 0,
+//         "Non-Veg Main Course": vegNonVeg === "Non-Veg" ? 2 : 0,
+//         "Paneer": 1,
+//         "Vegetable": 2,
+//         "Bhaja": vegNonVeg === "Veg" ? 1 : 0,
+//         "Lentil": 1,
+//         "Rice": 1,
+//         "Indian Breads": 5,
+//         "Salad": 3,
+//         "Curd": 2,
+//         "Desserts": 2,
+//         "Ice Cream": 1,
+//       },
+//       "Platinum Rate Plan": {
+//         "Starter Veg": vegNonVeg === "Veg" ? 8 : 4,
+//         "Starter Non-Veg": vegNonVeg === "Non-Veg" ? 4 : 0,
+//         "Soup Veg": vegNonVeg === "Veg" ? 2 : 1,
+//         "Soup Non-Veg": vegNonVeg === "Non-Veg" ? 1 : 0,
+//         "Non-Veg Main Course": vegNonVeg === "Non-Veg" ? 3 : 0,
+//         "Paneer": 2,
+//         "Vegetable": 3,
+//         "Bhaja": vegNonVeg === "Veg" ? 1 : 0,
+//         "Lentil": 2,
+//         "Rice": 2,
+//         "Indian Breads": 6,
+//         "Salad": 5,
+//         "Curd": 2,
+//         "Desserts": 2,
+//         "Ice Cream": 2,
+//       },
+//     };
 
+//     // Map API category names to the defined categories (case-insensitive)
+//     const categoryLower = category.toLowerCase();
+//     if (categoryLower.includes("starter") && categoryLower.includes("veg")) return limits[ratePlan]?.["Starter Veg"] || 0;
+//     if (categoryLower.includes("starter") && categoryLower.includes("non-veg")) return limits[ratePlan]?.["Starter Non-Veg"] || 0;
+//     if (categoryLower.includes("soup") && categoryLower.includes("veg")) return limits[ratePlan]?.["Soup Veg"] || 0;
+//     if (categoryLower.includes("soup") && categoryLower.includes("non-veg")) return limits[ratePlan]?.["Soup Non-Veg"] || 0;
+//     if (categoryLower.includes("non-veg") && categoryLower.includes("main")) return limits[ratePlan]?.["Non-Veg Main Course"] || 0;
+//     if (categoryLower.includes("paneer")) return limits[ratePlan]?.["Paneer"] || 0;
+//     if (categoryLower.includes("vegetable") || categoryLower.includes("veg main")) return limits[ratePlan]?.["Vegetable"] || 0;
+//     if (categoryLower.includes("bhaja")) return limits[ratePlan]?.["Bhaja"] || 0;
+//     if (categoryLower.includes("lentil") || categoryLower.includes("dal")) return limits[ratePlan]?.["Lentil"] || 0;
+//     if (categoryLower.includes("rice")) return limits[ratePlan]?.["Rice"] || 0;
+//     if (categoryLower.includes("bread")) return limits[ratePlan]?.["Indian Breads"] || 0;
+//     if (categoryLower.includes("salad")) return limits[ratePlan]?.["Salad"] || 0;
+//     if (categoryLower.includes("curd")) return limits[ratePlan]?.["Curd"] || 0;
+//     if (categoryLower.includes("dessert")) return limits[ratePlan]?.["Desserts"] || 0;
+//     if (categoryLower.includes("ice cream")) return limits[ratePlan]?.["Ice Cream"] || 0;
+
+//     return 0; // Default to 0 if category doesn't match
+//   };
+
+//   // Fetch menu items from API
 //   useEffect(() => {
 //     async function fetchMenu() {
 //       try {
-//         const response = await fetch('https://banquet-seven.vercel.app/api/user/vegmenu');
+//         const endpoint = vegNonVeg === "Veg"
+//           ? 'https://banquet-seven.vercel.app/api/user/vegmenu'
+//           : vegNonVeg === "Non-Veg"
+//           ? 'https://banquet-seven.vercel.app/api/user/nonvegmenu'
+//           : null;
+        
+//         if (!endpoint) {
+//           setMenuItems([]);
+//           return;
+//         }
+
+//         const response = await fetch(endpoint);
 //         if (!response.ok) throw new Error('Network error');
 //         const data = await response.json();
-//         console.log("Menu Items:", data.vegMenu);
-//         setMenuItems(data.vegMenu || []);
+//         console.log(`${vegNonVeg} Menu Items:`, vegNonVeg === "Veg" ? data.vegMenu : data.nonvegMenu);
+//         const fetchedMenuItems = (vegNonVeg === "Veg" ? data.vegMenu : data.nonvegMenu) || [];
+
+//         // Filter categories based on selection limits (only include categories with non-zero limits)
+//         const filteredMenuItems = fetchedMenuItems.filter(categoryBlock => {
+//           const limit = getSelectionLimits(categoryBlock.category);
+//           return limit > 0; // Only include categories with a non-zero selection limit
+//         });
+
+//         // No longer slicing items to match the selection limit; show all items
+//         setMenuItems(filteredMenuItems);
+//         setSelectedMenu({});
 //       } catch (error) {
-//         console.error('Error fetching menu:', error);
+//         console.error(`Error fetching ${vegNonVeg} menu:`, error);
 //         setMenuItems([]);
 //       }
 //     }
 //     fetchMenu();
-//   }, []);
- 
-//   useEffect(() => {
-//   async function fetchNonVegMenu() {
-//     try {
-//       const response = await fetch('https://banquet-seven.vercel.app/api/user/nonvegmenu');
-//       if (!response.ok) throw new Error('Network error');
-//       const data = await response.json();
-//       console.log("Non-Veg Menu Items:", data.nonvegMenu);
-//       setMenuItems(data.nonvegMenu || []);
-//     } catch (error) {
-//       console.error('Error fetching non-veg menu:', error);
-//       setMenuItems([]);
-//     }
-//   }
+//   }, [vegNonVeg, ratePlan]); // Depend on both vegNonVeg and ratePlan
 
-//   fetchNonVegMenu();
-// }, []);
-
-
+//   // Toggle selection with dynamic limits
 //   const toggleSelect = (category, itemName) => {
 //     setSelectedMenu(prev => {
 //       const current = prev[category] || [];
 //       const alreadySelected = current.includes(itemName);
+//       const maxSelections = getSelectionLimits(category);
 
 //       if (alreadySelected) {
 //         return {
@@ -75,8 +157,8 @@
 //           [category]: current.filter(name => name !== itemName),
 //         };
 //       } else {
-//         if (current.length >= 3) {
-//           alert("Only 3 selections allowed per category.");
+//         if (current.length >= maxSelections) {
+//           alert(`Only ${maxSelections} selection${maxSelections > 1 ? 's' : ''} allowed for ${category}.`);
 //           return prev;
 //         }
 //         return {
@@ -87,9 +169,8 @@
 //     });
 //   };
 
-
 //   const handleSubmit = async () => {
-//     console.log("Submitting booking with data:")
+//     console.log("Submitting booking with data:");
 //     try {
 //       const dataToSend = {
 //         guest_name: guestName,
@@ -112,14 +193,12 @@
 //       console.log("Booking success:", res.data);
 //       alert("Booking submitted successfully!");
 //     } catch (error) {
-//       console.log(selectedMenu)
 //       console.error("Error submitting booking:", error.message, selectedMenu);
 //       alert("Failed to submit booking");
 //     }
 //   };
 
 //   return (
-
 //     <>
 //       <div className="grid grid-cols-2 grid-rows-6 md:grid-cols-3 md:grid-rows-4 gap-8 overflow-auto">
 //         <div className="flex flex-col">
@@ -172,8 +251,8 @@
 //           />
 //         </div>
          
-//           <div className="flex flex-col">
-//           <label className="text-sm font-medium text-gray-700 mb-1">Startdate</label>
+//         <div className="flex flex-col">
+//           <label className="text-sm font-medium text-gray-700 mb-1">Start Date</label>
 //           <input
 //             type="date"
 //             value={startDate}
@@ -183,7 +262,7 @@
 //         </div>
 
 //         <div className="flex flex-col">
-//           <label className="text-sm font-medium text-gray-700 mb-1">Enddate</label>
+//           <label className="text-sm font-medium text-gray-700 mb-1">End Date</label>
 //           <input
 //             type="date"
 //             value={endDate}
@@ -192,7 +271,6 @@
 //           />
 //         </div>
 
-        
 //         <div className="flex flex-col">
 //           <label className="text-sm font-medium text-gray-700 mb-1">Rate Plan</label>
 //           <select
@@ -205,7 +283,6 @@
 //             <option>Gold Rate Plan</option>
 //             <option>Platinum Rate Plan</option>
 //           </select>
-
 //         </div>
 
 //         <div className="flex flex-col">
@@ -245,7 +322,7 @@
 //             onChange={(e) => setVegNonVeg(e.target.value)}
 //             className="bg-white text-center text-gray-700 focus:text-black border border-gray-300 rounded-md py-2 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
 //           >
-//             <option disabled>Veg - Non Veg</option>
+//             <option value="" disabled>Veg - Non Veg</option>
 //             <option>Veg</option>
 //             <option>Non-Veg</option>
 //           </select>
@@ -255,7 +332,9 @@
 //           <label className="text-sm font-medium text-gray-700 mb-1">Menu Items</label>
 //           <button
 //             className="btn bg-gradient-to-r from-[#5e0d14] to-[#991e1e] text-white py-2"
-//             onClick={() => document.getElementById('my_modal_3').showModal()}>
+//             onClick={() => document.getElementById('my_modal_3').showModal()}
+//             disabled={!vegNonVeg || ratePlan === "Rate Plan"}
+//           >
 //             Open Menu Modal
 //           </button>
 
@@ -265,52 +344,56 @@
 //                 <form method="dialog">
 //                   <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 //                 </form>
-//                 <h3 className="font-bold text-lg text-center pb-2">Menu Items</h3>
+//                 <h3 className="font-bold text-lg text-center pb-2">{vegNonVeg} Menu Items</h3>
 //               </div>
 
 //               <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 pt-[42px]">
-//                 {menuItems.map((categoryBlock, index) => (
-//                   <div key={categoryBlock.category} className="border rounded-lg mb-4">
-//                     <div
-//                       className="bg-gray-200 p-4 cursor-pointer font-semibold flex justify-between items-center"
-//                       onClick={() =>
-//                         setExpandedCategory(expandedCategory === index ? null : index)
-//                       }
-//                     >
-//                       <span>{categoryBlock.category}</span>
-//                       <span>
-//                         ({selectedMenu[categoryBlock.category]?.length || 0}/3 selected)
-//                       </span>
-//                     </div>
-//                     {expandedCategory === index && (
-//                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-//                         {categoryBlock.items.map((item, idx) => (
-//                           <div
-//                             key={`${item.name}-${idx}`}
-//                             onClick={() => toggleSelect(categoryBlock.category, item.name)}
-//                             className={`cursor-pointer border rounded-xl p-4 flex items-center space-x-4 transition ${selectedMenu[categoryBlock.category]?.includes(item.name)
-//                                 ? 'bg-blue-100 border-blue-500 shadow-md'
-//                                 : 'hover:bg-gray-100'
-//                               }`}
-//                           >
-//                             {item.image && (
-//                               <img
-//                                 src={item.image.trim()}
-//                                 alt={item.name}
-//                                 className="w-12 h-12 object-cover rounded"
-//                               />
-//                             )}
-//                             <span className="font-medium">{item.name}</span>
-//                           </div>
-//                         ))}
+//                 {menuItems.length > 0 ? (
+//                   menuItems.map((categoryBlock, index) => (
+//                     <div key={categoryBlock.category} className="border rounded-lg mb-4">
+//                       <div
+//                         className="bg-gray-200 p-4 cursor-pointer font-semibold flex justify-between items-center"
+//                         onClick={() =>
+//                           setExpandedCategory(expandedCategory === index ? null : index)
+//                         }
+//                       >
+//                         <span>{categoryBlock.category}</span>
+//                         <span>
+//                           ({selectedMenu[categoryBlock.category]?.length || 0}/{getSelectionLimits(categoryBlock.category)} selected)
+//                         </span>
 //                       </div>
-//                     )}
+//                       {expandedCategory === index && (
+//                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+//                           {categoryBlock.items.map((item, idx) => (
+//                             <div
+//                               key={`${item.name}-${idx}`}
+//                               onClick={() => toggleSelect(categoryBlock.category, item.name)}
+//                               className={`cursor-pointer border rounded-xl p-4 flex items-center space-x-4 transition ${selectedMenu[categoryBlock.category]?.includes(item.name)
+//                                   ? 'bg-blue-100 border-blue-500 shadow-md'
+//                                   : 'hover:bg-gray-100'
+//                                 }`}
+//                             >
+//                               {item.image && (
+//                                 <img
+//                                   src={item.image.trim()}
+//                                   alt={item.name}
+//                                   className="w-12 h-12 object-cover rounded"
+//                                   onError={(e) => { e.target.style.display = 'none'; }}
+//                                 />
+//                               )}
+//                               <span className="font-medium">{item.name}</span>
+//                             </div>
+//                           ))}
+//                         </div>
+//                       )}
+//                     </div>
+//                   ))
+//                 ) : (
+//                   <div className="text-center text-gray-500">
+//                     No menu items available. Please select Veg or Non-Veg and a Rate Plan.
 //                   </div>
-//                 ))}
-
-
+//                 )}
 //               </div>
-
 
 //               <form method="dialog" className="flex justify-center items-center mt-6">
 //                 <button type="submit" className="btn bg-gradient-to-r from-[#5e0d14] to-[#991e1e] py-2 w-[40%] md:w-[20%] text-white">
@@ -319,8 +402,6 @@
 //               </form>
 //             </div>
 //           </dialog>
-
-
 //         </div>
 
 //         <div className="flex flex-col">
@@ -339,12 +420,11 @@
 //         </button>
 //       </form>
 //     </>
-
 //   );
 // }
 
 // export default Booking;
-import { useState, useEffect } from "react";
+ import { useState, useEffect } from "react";
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import axios from 'axios';
@@ -364,6 +444,9 @@ const Booking = () => {
   const [vegNonVeg, setVegNonVeg] = useState("");
   const [notes, setNotes] = useState("");
   const [expandedCategory, setExpandedCategory] = useState(null);
+  const [allLimits, setAllLimits] = useState(null); // Store the full limits document
+  const [isLoadingMenu, setIsLoadingMenu] = useState(false);
+  const [isLoadingLimits, setIsLoadingLimits] = useState(false);
   const balance = (parseFloat(total) || 0) - (parseFloat(advance) || 0);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -375,120 +458,157 @@ const Booking = () => {
     endDate = date;
   }
 
-  // Define selection limits based on rate plan and veg/non-veg
-  const getSelectionLimits = (category) => {
-    const limits = {
-      "Silver Rate Plan": {
-        "Starter Veg": vegNonVeg === "Veg" ? 3 : 2,
-        "Starter Non-Veg": vegNonVeg === "Non-Veg" ? 1 : 0,
-        "Soup Veg": 1,
-        "Soup Non-Veg": 0,
-        "Non-Veg Main Course": vegNonVeg === "Non-Veg" ? 1 : 0,
-        "Paneer": 1,
-        "Vegetable": 2,
-        "Bhaja": 0,
-        "Lentil": 1,
-        "Rice": 1,
-        "Indian Breads": 3,
-        "Salad": 2,
-        "Curd": 1,
-        "Desserts": 1,
-        "Ice Cream": 1,
-      },
-      "Gold Rate Plan": {
-        "Starter Veg": vegNonVeg === "Veg" ? 4 : 3,
-        "Starter Non-Veg": vegNonVeg === "Non-Veg" ? 2 : 0,
-        "Soup Veg": vegNonVeg === "Veg" ? 2 : 1,
-        "Soup Non-Veg": vegNonVeg === "Non-Veg" ? 1 : 0,
-        "Non-Veg Main Course": vegNonVeg === "Non-Veg" ? 2 : 0,
-        "Paneer": 1,
-        "Vegetable": 2,
-        "Bhaja": vegNonVeg === "Veg" ? 1 : 0,
-        "Lentil": 1,
-        "Rice": 1,
-        "Indian Breads": 5,
-        "Salad": 3,
-        "Curd": 2,
-        "Desserts": 2,
-        "Ice Cream": 1,
-      },
-      "Platinum Rate Plan": {
-        "Starter Veg": vegNonVeg === "Veg" ? 8 : 4,
-        "Starter Non-Veg": vegNonVeg === "Non-Veg" ? 4 : 0,
-        "Soup Veg": vegNonVeg === "Veg" ? 2 : 1,
-        "Soup Non-Veg": vegNonVeg === "Non-Veg" ? 1 : 0,
-        "Non-Veg Main Course": vegNonVeg === "Non-Veg" ? 3 : 0,
-        "Paneer": 2,
-        "Vegetable": 3,
-        "Bhaja": vegNonVeg === "Veg" ? 1 : 0,
-        "Lentil": 2,
-        "Rice": 2,
-        "Indian Breads": 6,
-        "Salad": 5,
-        "Curd": 2,
-        "Desserts": 2,
-        "Ice Cream": 2,
-      },
-    };
+  const safeStartDate = startDate || "";
+  const safeEndDate = endDate || "";
 
-    // Map API category names to the defined categories (case-insensitive)
-    const categoryLower = category.toLowerCase();
-    if (categoryLower.includes("starter") && categoryLower.includes("veg")) return limits[ratePlan]?.["Starter Veg"] || 0;
-    if (categoryLower.includes("starter") && categoryLower.includes("non-veg")) return limits[ratePlan]?.["Starter Non-Veg"] || 0;
-    if (categoryLower.includes("soup") && categoryLower.includes("veg")) return limits[ratePlan]?.["Soup Veg"] || 0;
-    if (categoryLower.includes("soup") && categoryLower.includes("non-veg")) return limits[ratePlan]?.["Soup Non-Veg"] || 0;
-    if (categoryLower.includes("non-veg") && categoryLower.includes("main")) return limits[ratePlan]?.["Non-Veg Main Course"] || 0;
-    if (categoryLower.includes("paneer")) return limits[ratePlan]?.["Paneer"] || 0;
-    if (categoryLower.includes("vegetable") || categoryLower.includes("veg main")) return limits[ratePlan]?.["Vegetable"] || 0;
-    if (categoryLower.includes("bhaja")) return limits[ratePlan]?.["Bhaja"] || 0;
-    if (categoryLower.includes("lentil") || categoryLower.includes("dal")) return limits[ratePlan]?.["Lentil"] || 0;
-    if (categoryLower.includes("rice")) return limits[ratePlan]?.["Rice"] || 0;
-    if (categoryLower.includes("bread")) return limits[ratePlan]?.["Indian Breads"] || 0;
-    if (categoryLower.includes("salad")) return limits[ratePlan]?.["Salad"] || 0;
-    if (categoryLower.includes("curd")) return limits[ratePlan]?.["Curd"] || 0;
-    if (categoryLower.includes("dessert")) return limits[ratePlan]?.["Desserts"] || 0;
-    if (categoryLower.includes("ice cream")) return limits[ratePlan]?.["Ice Cream"] || 0;
+  // Fetch the full limits document from the API
+  useEffect(() => {
+    async function fetchAllLimits() {
+      setIsLoadingLimits(true);
+      try {
+        const response = await fetch('https://banquet-seven.vercel.app/api/user/getlimits');
+        if (!response.ok) throw new Error(`Failed to fetch limits: ${response.statusText}`);
+        const result = await response.json();
+        console.log("Fetched All Limits:", result);
+        if (result.success && result.data) {
+          setAllLimits(result.data); // Store the full limits document
+        } else {
+          console.error("Failed to fetch limits: No valid data in response", result);
+          setAllLimits(null);
+        }
+      } catch (error) {
+        console.error("Error fetching all limits:", error.message);
+        setAllLimits(null);
+      } finally {
+        setIsLoadingLimits(false);
+      }
+    }
+    fetchAllLimits();
+  }, []); // Fetch only once on component mount
 
-    return 0; // Default to 0 if category doesn't match
-  };
-
-  // Fetch menu items from API
+  // Fetch menu items from API, but only after limits are fetched
   useEffect(() => {
     async function fetchMenu() {
+      if (!vegNonVeg || ratePlan === "Rate Plan") {
+        setMenuItems([]);
+        return;
+      }
+
+      if (isLoadingLimits) {
+        console.log("Waiting for limits to load before fetching menu...");
+        return;
+      }
+
+      setIsLoadingMenu(true);
       try {
         const endpoint = vegNonVeg === "Veg"
           ? 'https://banquet-seven.vercel.app/api/user/vegmenu'
           : vegNonVeg === "Non-Veg"
           ? 'https://banquet-seven.vercel.app/api/user/nonvegmenu'
           : null;
-        
+
         if (!endpoint) {
           setMenuItems([]);
+          setIsLoadingMenu(false);
           return;
         }
 
         const response = await fetch(endpoint);
-        if (!response.ok) throw new Error('Network error');
+        if (!response.ok) throw new Error(`Failed to fetch menu: ${response.statusText}`);
         const data = await response.json();
-        console.log(`${vegNonVeg} Menu Items:`, vegNonVeg === "Veg" ? data.vegMenu : data.nonvegMenu);
+        console.log(`${vegNonVeg} Menu Items Response:`, data);
         const fetchedMenuItems = (vegNonVeg === "Veg" ? data.vegMenu : data.nonvegMenu) || [];
 
-        // Filter categories based on selection limits (only include categories with non-zero limits)
         const filteredMenuItems = fetchedMenuItems.filter(categoryBlock => {
           const limit = getSelectionLimits(categoryBlock.category);
-          return limit > 0; // Only include categories with a non-zero selection limit
+          console.log(`Category: ${categoryBlock.category}, Limit: ${limit}`);
+          return limit > 0;
         });
 
-        // No longer slicing items to match the selection limit; show all items
+        console.log("Filtered Menu Items:", filteredMenuItems);
         setMenuItems(filteredMenuItems);
         setSelectedMenu({});
       } catch (error) {
-        console.error(`Error fetching ${vegNonVeg} menu:`, error);
+        console.error(`Error fetching ${vegNonVeg} menu:`, error.message);
         setMenuItems([]);
+      } finally {
+        setIsLoadingMenu(false);
       }
     }
     fetchMenu();
-  }, [vegNonVeg, ratePlan]); // Depend on both vegNonVeg and ratePlan
+  }, [vegNonVeg, ratePlan, isLoadingLimits]);
+
+  // Define selection limits based on the full limits document
+  const getSelectionLimits = (category) => {
+    if (!allLimits || !ratePlan || ratePlan === "Rate Plan" || !vegNonVeg) {
+      console.log(`No limits available. allLimits: ${allLimits}, ratePlan: ${ratePlan}, vegNonVeg: ${vegNonVeg}`);
+      return 0;
+    }
+
+    // Find the matching limits for the current ratePlan and vegNonVeg
+    const matchingLimit = allLimits.find(
+      limit => limit.ratePlan === ratePlan && limit.vegNonVeg === vegNonVeg
+    );
+
+    if (!matchingLimit || !matchingLimit.limits) {
+      console.log(`No matching limits found for ratePlan: ${ratePlan}, vegNonVeg: ${vegNonVeg}`);
+      return 0;
+    }
+
+    const limits = matchingLimit.limits;
+    console.log(`Checking limit for category: ${category}, Limits:`, limits);
+
+    const categoryLower = category.toLowerCase().replace(/\s+/g, ' ').trim();
+
+    if ((categoryLower.includes("veg") && categoryLower.includes("starter")) || categoryLower === "veg starters") {
+      return limits["Starter Veg"] || 0;
+    }
+    if ((categoryLower.includes("non-veg") && categoryLower.includes("starter")) || categoryLower === "non-veg starters") {
+      return limits["Starter Non-Veg"] || 0;
+    }
+    if ((categoryLower.includes("veg") && categoryLower.includes("soup")) || categoryLower === "veg soup") {
+      return limits["Soup Veg"] || 0;
+    }
+    if ((categoryLower.includes("non-veg") && categoryLower.includes("soup")) || categoryLower === "non-veg soup") {
+      return limits["Soup Non-Veg"] || 0;
+    }
+    if (categoryLower.includes("non-veg") && (categoryLower.includes("main") || categoryLower.includes("course"))) {
+      return limits["Non-Veg Main Course"] || 0;
+    }
+    if (categoryLower.includes("paneer")) {
+      return limits["Paneer"] || 0;
+    }
+    if (categoryLower.includes("vegetable") || categoryLower.includes("veg main")) {
+      return limits["Vegetable"] || 0;
+    }
+    if (categoryLower.includes("bhaja")) {
+      return limits["Bhaja"] || 0;
+    }
+    if (categoryLower.includes("lentil") || categoryLower.includes("dal")) {
+      return limits["Lentil"] || 0;
+    }
+    if (categoryLower.includes("rice")) {
+      return limits["Rice"] || 0;
+    }
+    if (categoryLower.includes("bread")) {
+      return limits["Indian Breads"] || 0;
+    }
+    if (categoryLower.includes("salad")) {
+      return limits["Salad"] || 0;
+    }
+    if (categoryLower.includes("curd")) {
+      return limits["Curd"] || 0;
+    }
+    if (categoryLower.includes("dessert")) {
+      return limits["Desserts"] || 0;
+    }
+    if (categoryLower.includes("ice cream")) {
+      return limits["Ice Cream"] || 0;
+    }
+
+    console.log(`No matching limit found for category: ${category}`);
+    return 0;
+  };
 
   // Toggle selection with dynamic limits
   const toggleSelect = (category, itemName) => {
@@ -496,6 +616,7 @@ const Booking = () => {
       const current = prev[category] || [];
       const alreadySelected = current.includes(itemName);
       const maxSelections = getSelectionLimits(category);
+      console.log(`Toggle Select - Category: ${category}, Item: ${itemName}, Current Selections: ${current.length}, Max Selections: ${maxSelections}`);
 
       if (alreadySelected) {
         return {
@@ -601,7 +722,7 @@ const Booking = () => {
           <label className="text-sm font-medium text-gray-700 mb-1">Start Date</label>
           <input
             type="date"
-            value={startDate}
+            value={safeStartDate}
             readOnly
             className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
           />
@@ -611,7 +732,7 @@ const Booking = () => {
           <label className="text-sm font-medium text-gray-700 mb-1">End Date</label>
           <input
             type="date"
-            value={endDate}
+            value={safeEndDate}
             readOnly
             className="focus:text-black placeholder:text-gray-400 border border-gray-300 rounded-md text-center py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#991e1e]"
           />
@@ -694,7 +815,11 @@ const Booking = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-4 pt-[42px]">
-                {menuItems.length > 0 ? (
+                {isLoadingMenu || isLoadingLimits ? (
+                  <div className="text-center text-gray-500">
+                    Loading menu items...
+                  </div>
+                ) : menuItems.length > 0 ? (
                   menuItems.map((categoryBlock, index) => (
                     <div key={categoryBlock.category} className="border rounded-lg mb-4">
                       <div
@@ -736,7 +861,7 @@ const Booking = () => {
                   ))
                 ) : (
                   <div className="text-center text-gray-500">
-                    No menu items available. Please select Veg or Non-Veg and a Rate Plan.
+                    No menu items available. Please ensure a valid Rate Plan and Veg/Non-Veg option are selected.
                   </div>
                 )}
               </div>

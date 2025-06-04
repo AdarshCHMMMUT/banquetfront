@@ -1,5 +1,4 @@
-// SlideToggle.js
-import React from 'react';
+
 
 const SlideToggle = ({ isOn, onToggle }) => {
   return (

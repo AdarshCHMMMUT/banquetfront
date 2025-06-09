@@ -81,7 +81,7 @@ const Login = () => {
               <label className="block mb-1 text-gray-700">Phone Number</label>
               <input
                 type="tel"
-                placeholder="+91XXXXXXXXXX"
+                placeholder="9876543210"
                 className="input input-bordered w-full"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}

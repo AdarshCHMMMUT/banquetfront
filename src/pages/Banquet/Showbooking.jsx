@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const ShowBooking = () => {
+const Showbooking = () => {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
@@ -88,4 +88,4 @@ const ShowBooking = () => {
   );
 };
 
-export default ShowBooking;
+export default Showbooking;

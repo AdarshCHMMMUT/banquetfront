@@ -7,7 +7,7 @@ import Booking from "./pages/Banquet/Booking";
 import ListCategory from "./pages/Category/ListCategory";
 import Limits from "./pages/Category/limit";
 import logo from "./assets/pcs.png";
-import ShowBooking from "./pages/Banquet/showbooking";
+import Showbooking from "./pages/Banquet/showbooking";
 
 const App = () => {
 
@@ -306,7 +306,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/booking" element={<Booking />} />
                 <Route path="/listcategory" element={<ListCategory />} />
-                <Route path="/showbooking" element={<ShowBooking />} />
+                <Route path="/showbooking" element={<Showbooking />} />
                 <Route path="/limits" element={<Limits />} />
               </Routes>
             </div>

@@ -1,5 +1,5 @@
  
- import { useState, useEffect } from "react";
+ import { useState, useEffect} from "react";
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import axios from 'axios';
@@ -19,7 +19,7 @@ const Booking = () => {
   const [vegNonVeg, setVegNonVeg] = useState("");
   const [notes, setNotes] = useState("");
   const [expandedCategory, setExpandedCategory] = useState(null);
-  const [allLimits, setAllLimits] = useState(null); // Store the full limits document
+  const [allLimits, setAllLimits] = useState(null);
   const [isLoadingMenu, setIsLoadingMenu] = useState(false);
   const [isLoadingLimits, setIsLoadingLimits] = useState(false);
   const balance = (parseFloat(total) || 0) - (parseFloat(advance) || 0);
@@ -236,7 +236,7 @@ const Booking = () => {
         alert("Please fill in all required fields.");
         return;
       }
-    
+
       console.log("Data to send:", dataToSend.items);
       const res = await axios.post('https://banquet-seven.vercel.app/api/user/bookhall', dataToSend);
       console.log("Booking success:", res.data);

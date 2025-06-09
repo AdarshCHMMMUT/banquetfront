@@ -7,10 +7,10 @@ import Booking from "./pages/Banquet/Booking";
 import ListCategory from "./pages/Category/ListCategory";
 import Limits from "./pages/Category/limit";
 import logo from "./assets/pcs.png";
-import ShowBooking from "./pages/Banquet/showbooking";
+import ShowBooking from "../pages/Banquet/showbooking";
 
 const App = () => {
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const [activeLink, setActiveLink] = useState("dashboard");

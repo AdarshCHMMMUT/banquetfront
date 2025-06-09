@@ -236,7 +236,7 @@ const Booking = () => {
         alert("Please fill in all required fields.");
         return;
       }
-
+    
       console.log("Data to send:", dataToSend.items);
       const res = await axios.post('https://banquet-seven.vercel.app/api/user/bookhall', dataToSend);
       console.log("Booking success:", res.data);

@@ -7,7 +7,7 @@ import Booking from "./pages/Banquet/Booking";
 import ListCategory from "./pages/Category/ListCategory";
 import Limits from "./pages/Category/limit";
 import logo from "./assets/pcs.png";
-import Showbooking from "./pages/Banquet/showbooking";
+import Showbooking from "./pages/Banquet/Showbooking";
 
 const App = () => {
 

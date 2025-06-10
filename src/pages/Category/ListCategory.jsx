@@ -20,9 +20,6 @@ const ListCategory = () => {
   const [newItemName, setNewItemName] = useState("");
   const [newItemImage, setNewItemImage] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [newCategoryItems, setNewCategoryItems] = useState([]);
-  const [newItemInput, setNewItemInput] = useState("");
-  const [newItemImageInput, setNewItemImageInput] = useState("");
   const [menuType, setMenuType] = useState("Veg");
   const [editingItem, setEditingItem] = useState(null);
   const [editItemName, setEditItemName] = useState("");
@@ -155,76 +152,23 @@ const ListCategory = () => {
       toast.error("Category name cannot be empty");
       return;
     }
-    if (newCategoryItems.length === 0) {
-      toast.error("At least one item is required for the new category");
-      return;
-    }
-
     try {
       const endpoint =
         menuType === "Veg"
           ? "https://banquet-seven.vercel.app/api/user/addvegmenu"
           : "https://banquet-seven.vercel.app/api/user/addnonvegmenu";
-
-      const firstItem = newCategoryItems[0];
       const response = await axios.post(endpoint, {
         category: newCategoryName,
-        name: firstItem.name,
-        image: firstItem.image,
+        name: "test product",
+        image: "https://images.creativemarket.com/0.1.0/ps/3379855/1360/967/m1/fpnw/wm1/q8mbhyffbveq5rn80tfc6z1glvbvwspe2ztxajpe3pkhgvitci56eo9qjscpvj7s-.jpg?1507495664&s=9165f8fe3fdbfd4ea6bfeab2bf7d5729",
       });
-
-      if (response.data.success) {
-        for (let i = 1; i < newCategoryItems.length; i++) {
-          const item = newCategoryItems[i];
-          await axios.post(endpoint, {
-            category: newCategoryName,
-            name: item.name,
-            image: item.image,
-          });
-        }
-
-        const newCategory = {
-          _id: `temp-${Date.now()}`,
-          category: newCategoryName,
-          items: newCategoryItems,
-          status: true,
-        };
-
-        setUserData([...userData, newCategory]);
-        setTotalPages(Math.ceil((userData.length + 1) / ITEMS_PER_PAGE));
-        setNewCategoryName("");
-        setNewCategoryItems([]);
-        toast.success("Category added successfully");
-      } else {
-        toast.error(response.data.message);
-      }
+      toast.success(response.data.message);
     } catch (error) {
       toast.error("Failed to add category");
       console.error(error.message);
     }
+    setNewCategoryName("");
   };
-
-
-
-
-
-  // add item to specific category
-  const handleAddItemToNewCategory = () => {
-    if (!newItemInput.trim() || !newItemImageInput.trim()) {
-      toast.error("Item name and image are required");
-      return;
-    }
-    setNewCategoryItems([...newCategoryItems, { name: newItemInput, image: newItemImageInput }]);
-    setNewItemInput("");
-    setNewItemImageInput("");
-  };
-
-
-
-
-
-
-
   // functions for editing name
   const handleEditItem = (categoryIndex, itemIndex, item) => {
     setEditingItem({ categoryIndex, itemIndex });
@@ -421,6 +365,7 @@ const ListCategory = () => {
       toast.error("Failed to delete item");
       console.error(error.message);
     }
+    setEditingItem(false);
   }
 
 
@@ -431,7 +376,7 @@ const ListCategory = () => {
 
       {/* Toggle between Veg and Non-Veg */}
       <div className="mt-12 p-4 shadow-sm border rounded-lg">
-        <label className="text-sm font-medium text-gray-700 mb-1">Menu Type</label>
+        <label className="text-xl font-medium text-gray-700 mb-1 ml-3 px-6">Menu Type</label>
         <select
           value={menuType}
           onChange={(e) => setMenuType(e.target.value)}
@@ -447,7 +392,7 @@ const ListCategory = () => {
         <h3 className="text-lg font-medium mb-4">Add New Category</h3>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">Category Name</label>
+            <label className="text-xlfont-medium text-gray-700 mb-1 px-6 ">Category Name</label>
             <input
               type="text"
               value={newCategoryName}
@@ -455,45 +400,6 @@ const ListCategory = () => {
               className="border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter category name"
             />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">Add Items</label>
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newItemInput}
-                  onChange={(e) => setNewItemInput(e.target.value)}
-                  className="border border-gray-300 rounded-md py-2 px-3 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter item name"
-                />
-                <input
-                  type="text"
-                  value={newItemImageInput}
-                  onChange={(e) => setNewItemImageInput(e.target.value)}
-                  className="border border-gray-300 rounded-md py-2 px-3 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter image URL"
-                />
-                <button
-                  onClick={handleAddItemToNewCategory}
-                  className="btn btn-primary text-white px-4 py-2"
-                >
-                  Add Item
-                </button>
-              </div>
-              {newCategoryItems.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-sm font-medium text-gray-700">Items:</p>
-                  <ul className="list-disc pl-5">
-                    {newCategoryItems.map((item, index) => (
-                      <li key={index} className="text-gray-600">
-                        {item.name} - {item.image}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
           </div>
           <button
             onClick={handleAddNewCategory}
